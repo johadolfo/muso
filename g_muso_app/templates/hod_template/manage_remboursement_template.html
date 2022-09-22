@@ -1,0 +1,73 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+Liste des Remboursements
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Remboursements Details</h3>
+      
+                      <div class="card-tools">
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                          <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+      
+                          <div class="input-group-append">
+                            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-hover text-nowrap">
+                        <thead>
+                          <tr>
+                            <th>NO</th>
+                            <th>Date Remboursement</th>
+                            <th>No Credit</th>
+                            <th>Membre</th>
+                            <th>Montant Due</th>
+                            <th>Capital a Remb.</th>
+                            <th>Interet a Remb</th>
+                            <th>Balance</th>
+                            <th>Penalite </th>
+                            <th>Commentaire </th>
+                            <th>Recu Par</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {% for remb in rembs %}
+                          <tr>
+                            <td>{{ remb.id }}</td>
+                            <td>{{ remb.date_remb }}</td>
+                            <td>{{ remb.codecredit.numero }}</td>
+                            <td>{{ remb.faites_par.prenomp }} {{ remb.faites_par.nomp }}</td>
+                            <td>{{ remb.montant_a_remb }}</td>
+                            <td>{{ remb.capital_remb }}</td>
+                            <td>{{ remb.interet_remb }}</td>
+                            <td>{{ remb.balance }}</td>
+                            <td>{{ remb.penalite }}</td>
+                            <td>{{ remb.commentaire }}</td>
+                            <td>{{ remb.recu_par }}</td>
+                            <td> <a href="/edit_remboursement/{{ remb.id }}" class="btn btn-success">Edit</a></td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /.card-body -->
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+            </div>
+        </div>
+    </section>
+      <!-- /.content -->
+{% endblock main_content %}

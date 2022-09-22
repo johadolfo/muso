@@ -1,0 +1,80 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+Liste des Credits
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Credits Details</h3>
+      
+                      <div class="card-tools">
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                          <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+      
+                          <div class="input-group-append">
+                            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-hover text-nowrap">
+                        <thead>
+                          <tr>
+                            <th>NO</th>
+                            <th>Membre</th>
+                            <th>Date Credit</th>
+                            <th>Nombre de Mois</th>
+                            <th>Date Debut</th>
+                            <th>Date Fin</th>
+                            <th>Montant</th>
+                            <th>Interet </th>
+                            <th>Commentaire </th>
+                            <th>Valider Par</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {% for credit in credits %}
+                          <tr>
+                            <td>{{ credit.numero }}</td>
+                            <td>{{ credit.code_membre.prenomp }} {{ credit.code_membre.nomp }}</td>
+                            <td>{{ credit.date_credit }}</td>
+                            <td>{{ credit.nbre_de_mois }}</td>
+                            <td>{{ credit.date_debut }}</td>
+                            <td>{{ credit.date_fin }}</td>
+                            <td>{{ credit.montant_credit }}</td>
+                            <td>{{ credit.interet_credit }}</td>
+                            <td>{{ credit.commentaire }}</td>
+                            <td>{{ credit.valider_par }}</td>
+                            <td>
+                              {% if credit.credit_status == "En cour" %}
+                              <button type="button" class="btn btn-warning" disabled="disabled" data-toggle="modal" data-target="#reply_modal">En cour..</button>
+                              {% else %}
+                              <button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">Termine!</button>
+                              {% endif %}
+                              <!-- {{ credit.credit_status }} -->
+                            </td>
+                            <td> <a href="/edit_credit/{{ credit.numero }}" class="btn btn-success">Edit</a></td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /.card-body -->
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+            </div>
+        </div>
+    </section>
+      <!-- /.content -->
+{% endblock main_content %}

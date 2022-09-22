@@ -1,0 +1,91 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+Edit Cotisation | Cotisation ID : {{ cotisation.id }}
+<!-- | Subject Name : {{ subject.subject_name }} | Subject ID : {{ subject.id }} -->
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+                    <!-- general form elements -->
+                <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Edit Cotisation</h3>
+                      </div>
+                      <!-- /.card-header -->
+                      <!-- form start -->
+                      <form role="form" action="/edit_cotisation_save" method="post">
+                        {% csrf_token %}
+                        <div class="card-body">
+                            <div class="form-group">
+                                  <label >Membre</label>
+                                  <select class="form-control"  name="membre">
+                                  {% for membre in membre_info %}
+                                    <option value="{{ membre.id}}" {% if membre.id == cotisation.code_membre.id %} selected {% endif %}>{{ membre.prenomp }} {{ membre.nomp }}</option>
+                                  {% endfor %}
+                                  </select>
+                            </div>
+  
+                            <div class="form-group">
+                              <label>Type Cotisation</label>
+                              <select class="form-control" name="type_cotisation">
+                                <option value="Fond de Credit" {% if cotisation.typecotisation == "Fond de Credit" %} selected {% endif %}>Fonds de Credit</option>
+                                <option value="Fond d'Urgence" {% if cotisation.typecotisation == "Fond d'Urgence" %} selected {% endif %}>Fond d'Urgence</option>
+                                <option value="Fond de Fonctionnement" {% if cotisation.typecotisation == "Fond de Fonctionnement" %} selected {% endif %}>Fond de Fonctionnement</option>
+                              </select>
+                            </div>
+
+                            <div class="form-group">
+                              <label>Montant</label>
+                              <input type="text" class="form-control" name="montant_edit_cot" placeholder="Entrer le Montant" value="{{ cotisation.montant }}">
+                              <input type="hidden"  name="cotisation_id" value="{{ cotisation.id }}">
+                            </div>
+                            <div class="form-group">
+                              <label>Interet</label>
+                              <input type="text" class="form-control" name="interet_" placeholder="Entrer l'interet" value="{{ cotisation.interet }}">
+                            </div>
+                            <div class="form-group">
+                              <label>Balance</label>
+                              <input type="text" class="form-control" name="balance" placeholder="Entrer la balance" value="{{ cotisation.balance }}">
+                            </div>
+                            <div class="form-group">
+                              <label>Date Fait</label>
+                              <input type="date" class="form-control" name="date_fait" placeholder="Entrer la Date" value="{{ cotisation.date_fait | date:'Y-m-d' }}">
+                            </div>
+                            
+                            <div class="form-group">
+                              <label>Penalite</label>
+                              <input type="text" class="form-control" name="penalite_" placeholder="Entrer le montant" value="{{ cotisation.penalite }}">
+                            </div>
+
+                          <div class="form-group">
+                            {% if messages %}
+                            <div class="col-12">
+                              {% for message in messages %}
+                              {% if message.tags == 'error' %}
+                              <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% if message.tags == 'success' %}
+                              <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% endfor %}
+                            </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <!-- /.card-body -->
+        
+                        <div class="card-footer">
+                          <button type="submit" class="btn btn-primary btn-block">Edit Cotisation</button>
+                        </div>
+                      </form>
+                </div>
+                    <!-- /.card -->
+              </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+      {% endblock main_content %}

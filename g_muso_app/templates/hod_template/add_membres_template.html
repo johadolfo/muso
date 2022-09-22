@@ -1,0 +1,31 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+AJOUTER MEMBRE
+{% endblock page_title %}
+{% block main_content %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+<!-- #gdfdgd -->
+<section class="content">
+    <div class="container-fluid">
+      <div class="row">
+          <div class="col-md-12">
+                <div class="card card-body">
+                    <div class="display_table">
+                        <form method="POST" action=''>
+                            {% csrf_token %} 
+                            {{form|crispy}}
+                            <br>
+                            <input class="btn btn-primary mybutton" type="submit" value="Save" />
+                        </form>
+                    </div>
+                
+                </div>
+        </div>
+    </div>
+</div>
+</section>
+{% endblock main_content %}

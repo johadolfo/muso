@@ -1,0 +1,211 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+AJOUTER MEMBRE
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+                    <!-- general form elements -->
+                <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Ajouter Membre</h3>
+                      </div>
+
+                      <form role="form" action="/add_membre_save" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="card-body">
+                          <div class="form-group">
+                            <label>Email </label>
+                            <input type="email" class="form-control" name="emailp" placeholder="Entrer l'email ">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Password </label>
+                            <input type="password" class="form-control" name="passwordp" placeholder="Entrer le password ">
+                          </div>
+                        
+                          <div class="form-group">
+                            <label>Code Membre </label>
+                            <input type="text" class="form-control" name="codep" placeholder="Entrer le code membre ">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Nom </label>
+                            <input type="text" class="form-control" name="nomp" placeholder="Entrer le nom ">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Prenom </label>
+                            <input type="text" class="form-control" name="prenomp" placeholder="Entrer le prenom">
+                          </div>
+                        
+                          <div class="form-group">
+                            <label>Sexe </label>
+                            <select class="form-control"   name="sexep">
+                              <option value="Feminin">Feminin</option>
+                              <option value="Masculin">Masculin</option>
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <label>Date Naissance </label>
+                            <input type="date" class="form-control" name="datenaissancep" placeholder="Entrer la date de Naissance ">
+                          </div>
+                        
+                          <div class="form-group">
+                            <label>Lieu de Naissance </label>
+                            <input type="text" class="form-control" name="lieunaissancep" placeholder="Entrer le lieu de Naissance ">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Adresse</label>
+                            <input type="text" class="form-control" name="adressep" placeholder="Entrer l'adresse ">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Ville </label>
+                            <input type="text" class="form-control" name="villep" placeholder="Entrer la ville ">
+                          </div>
+                        
+                          <div class="form-group">
+                            <label>Commune </label>
+                            <input type="text" class="form-control" name="communep" placeholder="Entrer la commune ">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Departement</label>
+                            <input type="text" class="form-control" name="departementp" placeholder="Entrer le departement ">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Pays </label>
+                            <input type="text" class="form-control" name="paysp" placeholder="Entrer le nom du pays ">
+                          </div>
+                        
+                          <div class="form-group">
+                            <label>NIF / CIN </label>
+                            <input type="text" class="form-control" name="nifp" placeholder="Entrer le NIF ou CIN ">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Telephone 1</label>
+                            <input type="text" class="form-control" name="telephone1p" placeholder="Entrer un numero de telephone ">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Telephone 2 </label>
+                            <input type="text" class="form-control" name="telephone2p" placeholder="Entrer un deuxieme numero de telephone ">
+                          </div>
+                        
+                          <div class="form-group">
+                            <label>Activite / Profession </label>
+                            <input type="text" class="form-control" name="activiteprofessionp" placeholder="Entrer ton activite ou ta profession ">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Reference</label>
+                            <input type="text" class="form-control" name="referencep" placeholder="Entrer une reference ">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Profile Pic</label>
+                            <input type="file" class="form-control" Required name="profile_pic">
+                          </div>
+
+                          <div class="form-group">
+                            {% if messages %}
+                            <div class="col-12">
+                              {% for message in messages %}
+                              {% if message.tags == 'error' %}
+                              <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% if message.tags == 'success' %}
+                              <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% endfor %}
+                            </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <!-- /.card-body -->
+        
+                        <div class="card-footer">
+                          <button type="submit" class="btn btn-primary btn-block">Add Membre</button>
+                        </div>
+                      </form>
+                      <!-- /.card-header -->
+                      <!-- form start -->
+                      <!-- {% url 'add_membre_save' as action_path %}
+                     {% include 'hod_template/form_template.html' with  messages=messages form=form action_path=action_path  button_text="Ajouter Membre" %} -->
+              </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+      {% endblock main_content %}
+      {% block custom_js %}
+  <script>
+      $(document).ready(function(){
+        $("#id_email").keyup(function(){
+            var email=$(this).val();
+            if(email!=""){
+              $.ajax({
+                url:'{% url "check_email_exist" %}',
+                type:'POST',
+                data:{email:email}
+              })
+              .done(function(response){
+                console.log(response);
+                if(response=="True"){
+                  $(".email_error").remove();
+                  $("<span class='email_error' style='padding:5px;color:red; font-weight:bold;'> Email Not AVailable </span>").insertAfter("#id_email");
+                }
+                else{
+                  $(".email_error").remove();
+                  $("<span class='email_error' style='padding:5px;color:green; font-weight:bold;'> Email  AVailable </span>").insertAfter("#id_email");
+                }
+                })
+              .fail(function(){
+                console.log("failed");
+              })
+          }
+          else{
+              $(".email_error").remove();
+          }
+        });
+
+        $("#codep").keyup(function(){
+            var codep=$(this).val();
+
+            if(codep!=""){
+              $.ajax({
+                url:'{% url "check_codep_exist" %}',
+                type:'POST',
+                data:{codep:codep}
+              })
+              .done(function(response){
+                console.log(response);
+                if(response=="True"){
+                  $(".codep_error").remove();
+                  $("<span class='codep_error' style='padding:5px;color:red; font-weight:bold;'> Username Not AVailable </span>").insertAfter("#id_username");
+                }
+                else{
+                  $(".codep_error").remove();
+                  $("<span class='codep_error' style='padding:5px;color:green; font-weight:bold;'> Username  AVailable </span>").insertAfter("#id_username");
+                }
+                })
+              .fail(function(){
+                console.log("failed");
+              })
+          }
+          else{
+              $(".codep_error").remove();
+          }
+          
+        });
+     });
+  </script>
+      {% endblock custom_js %}

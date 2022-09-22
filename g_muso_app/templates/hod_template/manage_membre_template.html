@@ -1,0 +1,105 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+Liste des Membres
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Membre Details</h3>
+      
+                      <div class="card-tools">
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                          <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+      
+                          <div class="input-group-append">
+                            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-hover text-nowrap">
+                        <thead>
+                          <tr>
+                            
+                            <th>Code Membre</th>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>Sexe</th>
+                            <th>Email</th>
+                            <th>Adresse</th>
+                            <th>Ville</th>
+                            <th>Commune</th>
+                            <th>NIF / CIN</th>
+                            <th>Telephone 1</th>
+                            <th>Telephone 2</th>
+                            <th>Profile Pic</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {% for membre in membres %}
+                          <tr>
+                            
+                            <td>{{ membre.codep }}</td>
+                            <td>{{ membre.admin.first_name }}</td>
+                            <td>{{ membre.admin.last_name }}</td>
+                            <td>{{ membre.sexep }}</td>
+                            <td>{{ membre.admin.email }}</td>
+                            <td>{{ membre.adressep }}</td>
+                            <td>{{ membre.villep }}</td>
+                            <td>{{ membre.communep }}</td>
+                            <td>{{ membre.nifp }}</td>
+                            <td>{{ membre.telephone1p }}</td>
+                            <td>{{ membre.telephone2p }}</td>
+                            <td><img src="{{ membre.profile_pic }}" style="width:50px"/></td>
+                            <td> <a href="{% url 'edit_membre'  membre_id=membre.admin.id %}" class="btn btn-success">Edit</a></td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- Pagination -->
+                    <nav class="mt-4">
+                      {% if membres.has_other_pages %}
+                      <ul class="pagination justify-content-left">
+                        {% if membres.has_previous %}
+                        <a href="?page= 1 " class="btn btn-outline-primary mb-4" style="width: 69 px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">First</a>
+                        <li class="page-item"><a class="page-link" href="?page={{ membres.previous_page_number }}"><i class="fas fa-angle-double-left"></i></a></li>
+                        {% else %}
+                        <li class="page-item disabled"></li>
+                        {% endif %}
+                        
+                        {% for i in membres.paginator.page_range %}
+                          {% if membres.number == 1 %}
+                          <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only"></span></span></li>
+                          {% else %}
+                          <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                          {% endif %}
+                        {% endfor %}
+
+                        {% if membres.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ membres.next_page_number }}" ><i class="fas fa-angle-double-right"></i></a></li>
+                        <a href="?page={{ membres.paginator.num_pages }}" class="btn btn-outline-primary mb-4" style="width:60px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">Last</a>
+                        {% else %}
+                        <li class="page-item disabled"></li>
+                        {% endif %}
+                      </ul>
+                    {% endif %}
+                    </nav>
+                    <!-- /.card-body -->
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+            </div>
+        </div>
+    </section>
+      <!-- /.content -->
+{% endblock main_content %}
