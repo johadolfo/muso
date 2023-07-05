@@ -81,7 +81,7 @@ def add_membre_save(request):
         return HttpResponse("Method Not Allowed")
     else:
         current_user = request.user
-        muso_id = current_user.muso
+        muso_id = current_user.muso_id
         #code_muso = request.POST.get("muso_id")
         #muso_id = tbmuso.objects.get(id=code_muso)
         prenomp = request.POST.get("prenomp")
@@ -148,7 +148,7 @@ def add_tbcotisation(request):
     # Le reste du code pour traiter la vue lorsqu'un utilisateur a l'autorisation
     is_button_disabled = True
     current_user = request.user
-    muso_id = current_user.muso
+    muso_id = current_user.muso_id
     cotisations = tbcotisation.objects.all()
     membre_info = Membre.objects.filter(admin__muso=current_user.muso)
     membres = CustomUser.objects.filter(user_type=2, muso=current_user.muso)
@@ -160,7 +160,7 @@ def add_cotisation_save(request):
         return HttpResponse("Method Not Allowed")
     else:
         current_user = request.user
-        muso_id = current_user.muso
+        muso_id = current_user.muso_id
         cotisations = tbcotisation.objects.filter(code_membre__admin__muso = muso_id)
 
         code_membres = request.POST.get("membre")
@@ -182,17 +182,19 @@ def add_cotisation_save(request):
         except Exception as e:
             messages.error(request,traceback.format_exc())
             return HttpResponseRedirect(reverse("add_tbcotisation"))
-        # except:
-        #     messages.error(request,"Failed to Add cotisation")
-        #     return HttpResponseRedirect(reverse("add_cotisation")) 
+        
 
 def add_credit(request):
     current_user = request.user
-    muso_id = current_user.muso
-    credits = tbcredit.objects.filter(code_membre__admin__muso=current_user.muso)
-    membre_info = Membre.objects.filter(admin__muso=current_user.muso)
-    membres = CustomUser.objects.filter(user_type=2, muso=current_user.muso)
-    return render(request, "hod_template/add_credit_template.html", {"membres":membres, "credits":credits, "membre_info":membre_info})
+    muso_id = current_user.muso_id
+    credits = tbcredit.objects.filter(code_membre__admin__muso=current_user.muso_id)
+    membre_info = Membre.objects.filter(admin__muso=current_user.muso_id)
+    membres = CustomUser.objects.filter(user_type=2, muso=current_user.muso_id)
+    muso_idd = str(muso_id)
+    interet_muso = tbmuso.objects.get(id=muso_idd)
+    #interet_muso = tbmuso.objects.filter(id=muso_idd)
+    #print(muso_idd)
+    return render(request, "hod_template/add_credit_template.html", {"membres":membres, "credits":credits, "membre_info":membre_info, "interet_muso":interet_muso})
 
 def add_credit_save(request):
     if request.method !="POST":
@@ -544,6 +546,7 @@ def liste_credit(request):
     current_user = request.user
     muso_id = current_user.muso_id
     credits = tbcredit.objects.filter(code_membre__admin__muso = muso_id).order_by('-date_credit')
+    
 
     if 'q' in request.GET:
         q = request.GET['q']
@@ -1160,7 +1163,7 @@ def edit_muso_save(request):
     current_user = request.user
     muso_id = current_user.muso_id
 
-    if request.method!="POST":
+    if request.method != "POST":
         return HttpResponseRedirect(reverse("edit_muso"))
     else:
         #code_muso = request.POST.get("depense_id")
@@ -1697,46 +1700,6 @@ def export_statistique_credit_csv(request):
         
     return response
 
-'''def export_statistique_credit_csv(request):
-    current_user = request.user
-    muso_id = current_user.muso_id
-
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="statistique_remboursement.csv"'
-
-    writer = csv.writer(response)
-   
-    writer.writerow(['numero','Montant_Credit','Montant_rembourser', 'Montant_interet',  'Date_credit']) # Add column headers
-    
-    subquery = tbremboursement.objects.filter(codecredit_id=OuterRef('numero')).values('codecredit_id')
-    credit_info = tbcredit.objects.annotate(
-        montant_rembourser=ExpressionWrapper(
-            (F('montant_credit') * F('interet_credit') * F('nbre_de_mois')) + F('montant_credit'),
-            output_field=FloatField()
-        ),
-        interet_total_credit=ExpressionWrapper(
-            ((F('montant_credit') * F('interet_credit') * F('nbre_de_mois')) + F('montant_credit')) - F('montant_credit'),
-            output_field=FloatField()
-        ),
-    ).filter(
-        code_membre__id=F('code_membre_id'),
-        code_membre__admin__id=F('code_membre__admin__id'),
-        code_membre__admin__muso_id=muso_id,
-        pk__in=Subquery(subquery)
-    ).values(
-        'numero',
-        'montant_credit',
-        'date_credit',
-        'montant_rembourser',
-        'interet_total_credit'
-    ).order_by('date_debut')
-
-    for item in credit_info:
-        writer.writerow([item.numero, item.montant_credit, item.date_credit, item.montant_rembourser, item.interet_total_credit, item.date_debut])
-        #writer.writerow([item[0], item[1], item[2], item[3], item[4], item[5]]) # Add data rows
-            #writer.writerow([item.codecredit_id, item.quantite_remboursement, item.Qtee_restant, item.montant_total_rembourse, item.montant_total_Restant, item.total_interet, item.total_interet_restant, item.total_penalite]) # Add data rows
-    return response'''
-
 def dernier_samedi(date):
         while date.weekday() != 5:
             date = date + timedelta(days=1)
@@ -1835,6 +1798,8 @@ def get_credit_info(request):
     }
     return JsonResponse(data)
 
+
+
 def add_comments_save(request):
     current_user = request.user
     muso_id = current_user.muso
@@ -1892,8 +1857,7 @@ def user_info(request):
 
 #@login_required
 def user_access(request):
-    # Récupérer les accès de l'utilisateur connecté
-    #user_permissions = request.user.user_permissions.all()
+ 
     user_permissions = Permission.objects.all()
     # Passer les accès au contexte de rendu
     context = {
@@ -1903,8 +1867,7 @@ def user_access(request):
     return render(request, 'hod_template/user_access.html', context)
 
 def user_groups(request):
-    # Récupérer les groupes d'utilisateurs de l'utilisateur connecté
-    #user_groups = request.user.groups.all()
+
     user_groups = AbstractBaseUser.objects.all()
     #
     # Passer les groupes d'utilisateurs au contexte de rendu
@@ -1913,49 +1876,3 @@ def user_groups(request):
     }
     return render(request, 'hod_template/user_groups.html', context)
 
-
-#permissions = Permission.objects.all()
-
-# Afficher les noms de colonnes
-#for field in permissions.model._meta.fields:
-    #print(field.name)
-
-# Afficher tous les noms de modèle dans django.contrib.auth.models
-'''for model_name in dir(auth_models):
-    model = getattr(auth_models, model_name)
-    if hasattr(model, '_meta') and model._meta.app_label == 'auth':
-        print(model_name)'''
-
-'''
-result = tbcredit.objects.filter(
-    numero__in=tbremboursement.objects.filter(interet_remb=0).values('codecredit_id')
-).filter(
-    code_membre__id__in=Membre.objects.filter(
-        admin__id__in=CustomUser.objects.filter(muso_id=1).values('id')
-    ).values('id')
-).annotate(
-    Interet_anticipe=Sum(F('montant_credit') * F('interet_credit'))
-).values('Interet_anticipe')
-
-print(result)
-
-result1 = tbcredit.objects.filter(
-    numero__in=tbremboursement.objects.filter(interet_remb=0).values('codecredit_id')
-).filter(
-    code_membre__admin__id__in=CustomUser.objects.filter(muso_id=1).values('id')
-).aggregate(
-    interet_anticipe_total=Sum(F('montant_credit') * F('interet_credit'))
-)
-
-print(result1['interet_anticipe_total'])
-
-interet_anticipe = tbcredit.objects.filter(
-    numero__in=tbremboursement.objects.filter(interet_remb=0, codecredit__isnull=False).values('codecredit'),
-    code_membre__admin__muso=1
-).aggregate(
-    interet_anticipe=Sum('montant_credit') * Sum('interet_credit')
-)
-
-somme_interet_anticipe = interet_anticipe['interet_anticipe']
-
-print(somme_interet_anticipe)'''

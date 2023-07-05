@@ -42,9 +42,10 @@ Ajouter Credit
                             <label>Montant Credit</label>
                             <input type="text" class="form-control" name="montant_credit" placeholder="Entrer le montant">
                           </div>
+                          
                           <div class="form-group">
                             <label>Interet Credit</label>
-                            <input type="text" class="form-control" name="interet_credit" placeholder="Entrer l'interet ">
+                            <input type="text" class="form-control" name="interet_credit"   value="{{ interet_muso.taux_interet }}" readonly>
                           </div>
                           <div class="form-group">
                                 <label >Membre</label>
