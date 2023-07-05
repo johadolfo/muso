@@ -1,0 +1,83 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+Liste des Cotisations
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Cotisation Details</h3>
+                    
+                      <div class="card-tools">
+                        <form >
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                          <input type="text" name="q" class="form-control float-right" placeholder="Search">
+                          <div class="input-group-append">
+                            <button  class="btn btn-secondary"><i class="fas fa-search"></i></button>
+                            <a href="{% url 'manage_cotisation' %}" class="btn btn-dark" style="margin-left: 2px";><i class="fas fa-sync-alt"></i></a>
+                          </div>
+                        </div>
+                      </form>
+                      </div>
+                    
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0">
+                     
+                            {% for cotisation in cotisations %}
+
+                            <li>{{ cotisation.prenomp }}</li>
+                            {% if cotisation.element_set.all %}
+                                <ul>
+                                    {% for child in cotisation.element_set.all %}
+                                        <li>{{ child.prenomp }}</li>
+                                        <!-- Répétez ce bloc pour chaque niveau supplémentaire -->
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                          
+                          {% endfor %}
+                     
+                    </div>
+                    <!-- /.card-body -->
+                  </div>
+                   <!-- Pagination -->
+                   <nav class="mt-4">
+                    {% if cotisations.has_other_pages %}
+                    <ul class="pagination justify-content-left">
+                      {% if cotisations.has_previous %}
+                      <a href="?page= 1 " class="btn btn-outline-primary mb-4" style="width: 69 px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">First</a>
+                      <li class="page-item"><a class="page-link" href="?page={{ cotisations.previous_page_number }}"><i class="fas fa-angle-double-left"></i></a></li>
+                      {% else %}
+                      <li class="page-item disabled"></li>
+                      {% endif %}
+                      
+                      {% for i in cotisations.paginator.page_range %}
+                        {% if cotisations.number == 1 %}
+                        <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only"></span></span></li>
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                        {% endif %}
+                      {% endfor %}
+
+                      {% if cotisations.has_next %}
+                      <li class="page-item"><a class="page-link" href="?page={{ cotisations.next_page_number }}" ><i class="fas fa-angle-double-right"></i></a></li>
+                      <a href="?page={{ cotisations.paginator.num_pages }}" class="btn btn-outline-primary mb-4" style="width:60px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">Last</a>
+                      {% else %}
+                      <li class="page-item disabled"></li>
+                      {% endif %}
+                    </ul>
+                  {% endif %}
+                  </nav>
+                  <!-- /.card -->
+                </div>
+              </div>
+            </div>
+        </div>
+    </section>
+      <!-- /.content -->
+{% endblock main_content %}

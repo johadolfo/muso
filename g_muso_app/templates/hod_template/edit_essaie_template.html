@@ -1,0 +1,143 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+<p>Edit Membre </p>
+Prenom : {{ prenomp }} | Code : {{ codep }}
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+                    <!-- general form elements -->
+                <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Edit Membre</h3>
+                      </div>
+                      <form role="form" action="/edit_membre_save" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                      <div class="card-body">
+                        <div class="form-group">
+                          <label>Code Membre </label>
+                          <input type="text" class="form-control" name="codep" value ="{{ membre_info.codep }}">
+                          <input type="hidden"  name="id_membre" value ="{{ membre_info.admin.id }}">
+                        </div>
+
+                        <div class="form-group">
+                          <label>Nom </label>
+                          <input type="text" class="form-control" name="nomp" placeholder="Entrer le nom " value ="{{ membre_info.nomp }}">
+                        </div>
+
+                        <div class="form-group">
+                          <label>Prenom </label>
+                          <input type="text" class="form-control" name="prenomp" placeholder="Entrer le prenom" value ="{{ membre_info.prenomp }}">
+                        </div>
+                      
+                        <div class="form-group">
+                          <label>Sexe </label>
+                          <select class="form-control"   name="sexep">
+                            <option value="Feminin" {% if membre_info.sexep == "Feminin" %} selected {% endif %}>Feminin</option>
+                            <option value="Masculin" {% if  membre_info.sexep == "Masculin" %} selected {% endif %}>Masculin</option>
+                          </select>
+                        </div>
+
+                        <div class="form-group">
+                          <label>Date Naissance </label>
+                          <input type="date" class="form-control" name="datenaissancep" placeholder="Entrer la date de Naissance " value ="{{ membre_info.date_fait | date:'Y-m-d' }}">
+                        </div>
+                      
+                        <div class="form-group">
+                          <label>Lieu de Naissance </label>
+                          <input type="text" class="form-control" name="lieunaissancep" placeholder="Entrer le lieu de Naissance " value ="{{ membre_info.lieunaissancep }}">
+                        </div>
+
+                        <div class="form-group">
+                          <label>Adresse</label>
+                          <input type="text" class="form-control" name="adressep" placeholder="Entrer l'adresse "  value ="{{ membre_info.adressep }}">
+                        </div>
+
+                        <div class="form-group">
+                          <label>Ville </label>
+                          <input type="text" class="form-control" name="villep" placeholder="Entrer la ville "  value ="{{ membre_info.villep }}">
+                        </div>
+                      
+                        <div class="form-group">
+                          <label>Commune </label>
+                          <input type="text" class="form-control" name="communep" placeholder="Entrer la commune "  value ="{{ membre_info.communep }}">
+                        </div>
+
+                        <div class="form-group">
+                          <label>Departement</label>
+                          <input type="text" class="form-control" name="departementp" placeholder="Entrer le departement "  value ="{{ membre_info.departementp }}">
+                        </div>
+
+                        <div class="form-group">
+                          <label>Pays </label>
+                          <input type="text" class="form-control" name="paysp" placeholder="Entrer le nom du pays "  value ="{{ membre_info.paysp }}">
+                        </div>
+                      
+                        <div class="form-group">
+                          <label>NIF / CIN </label>
+                          <input type="text" class="form-control" name="nifp" placeholder="Entrer le NIF ou CIN "  value ="{{ membre_info.nifp }}">
+                        </div>
+
+                        <div class="form-group">
+                          <label>Telephone 1</label>
+                          <input type="text" class="form-control" name="telephone1p" placeholder="Entrer un numero de telephone "  value ="{{ membre_info.telephone1p }}">
+                        </div>
+
+                        <div class="form-group">
+                          <label>Telephone 2 </label>
+                          <input type="text" class="form-control" name="telephone2p" placeholder="Entrer un deuxieme numero de telephone "  value ="{{ membre_info.telephone2p }}">
+                        </div>
+                      
+                        <div class="form-group">
+                          <label>Activite / Profession </label>
+                          <input type="text" class="form-control" name="activiteprofessionp" placeholder="Entrer ton activite ou ta profession "  value ="{{ membre_info.activiteprofessionp }}">
+                        </div>
+
+                        <div class="form-group">
+                          <label>Reference</label>
+                          <input type="text" class="form-control" name="referencep" placeholder="Entrer une reference "  value ="{{ membre_info.referencep }}">
+                        </div>
+
+                        <div class="form-group">
+                          <label>Profile Pic</label>
+                          <input type="file" class="form-control" Required name="profile_pic"  value ="{{ membre_info.profile_pic }}">
+                        </div>
+
+                        <div class="form-group">
+                          {% if messages %}
+                          <div class="col-12">
+                            {% for message in messages %}
+                            {% if message.tags == 'error' %}
+                            <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                            {% endif %}
+                            {% if message.tags == 'success' %}
+                            <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                            {% endif %}
+                            {% endfor %}
+                          </div>
+                          {% endif %}
+                        </div>
+                      </div>
+                      <!-- /.card-body -->
+      
+                      <div class="card-footer">
+                        <button type="submit" class="btn btn-primary btn-block">Edit Membre</button>
+                      </div>
+                    </form>
+                      <!-- /.card-header -->
+                      <!-- form start -->
+                      
+                    <!-- /.card -->
+                     <!-- form start -->
+                     <!-- {% url 'edit_membre_save' as action_path %}
+                     {% include 'hod_template/form_template.html' with  messages=messages form=form action_path=action_path  button_text="Edit Membre" %} -->
+                </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+      {% endblock main_content %}

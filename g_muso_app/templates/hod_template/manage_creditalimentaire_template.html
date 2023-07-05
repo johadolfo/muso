@@ -1,0 +1,116 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+Liste des Credits Alimentaire
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Credits Details: <button type="button" class="btn btn-success" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> QTE CREDIT : {{ qte_credit }}</button> Se Decompose En
+                        <button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> QTE CREDIT FINI: {{ qte_credit_fini }}</button> et 
+                        <button type="button" class="btn btn-warning" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> QTE CREDIT EN COUR: {{ qte_credit_en_cours }}</button> 
+
+                      </h3>
+      
+                      <div class="card-tools">
+                      <form >
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                          <input type="text" name="q" class="form-control float-right" placeholder="Search">
+      
+                          <div class="input-group-append">
+                            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                            <a href="{% url 'manage_creditalimentaire' %}" class="btn btn-dark" style="margin-left: 2px";><i class="fas fa-sync-alt"></i></a>
+                          </div>
+                        </div>
+                      </form>
+                      </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-hover text-nowrap">
+                        <thead>
+                          <tr>
+                            <th>NO</th>
+                            <th>Membre</th>
+                            <th>Date Credit</th>
+                            <th>Quantite de Versement</th>
+                            <th>Date Debut</th>
+                            <th>Date Fin</th>
+                            <th>Montant</th>
+                            <th>Interet </th>
+                            
+                    
+                            <th>Status</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {% for credit in creditalimentaires %}
+                          <tr>
+                            
+                            <td>{{ credit.numero }}</td>
+                            <td>{{ credit.code_membre.prenomp }} {{ credit.code_membre.nomp }}</td>
+                            <td>{{ credit.date_credit }}</td>
+                            <td>{{ credit.nbre_de_mois }}</td>
+                            <td>{{ credit.date_debut }}</td>
+                            <td>{{ credit.date_fin }}</td>
+                            <td>{{ credit.montant_credit }}</td>
+                            <td>{{ credit.interet_credit }}</td>
+                           
+                           
+                            <td>
+                              {% if credit.credit_status == "En cour" %}
+                              <button type="button" class="btn btn-warning" disabled="disabled" data-toggle="modal" data-target="#reply_modal">En cour..</button>
+                              {% else %}
+                              <button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">Termine!</button>
+                              {% endif %}
+                              <!-- {{ credit.credit_status }} -->
+                            </td>
+                            <td> <a href="/edit_credit/{{ credit.numero }}" class="btn btn-success">Edit</a></td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- Pagination -->
+                    <nav class="mt-4">
+                      {% if credits.has_other_pages %}
+                      <ul class="pagination justify-content-left">
+                        {% if credits.has_previous %}
+                        <a href="?page= 1 " class="btn btn-outline-primary mb-4" style="width: 69 px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">First</a>
+                        <li class="page-item"><a class="page-link" href="?page={{ credits.previous_page_number }}"><i class="fas fa-angle-double-left"></i></a></li>
+                        {% else %}
+                        <li class="page-item disabled"></li>
+                        {% endif %}
+                        
+                        {% for i in credits.paginator.page_range %}
+                          {% if credits.number == 1 %}
+                          <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only"></span></span></li>
+                          {% else %}
+                          <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                          {% endif %}
+                        {% endfor %}
+
+                        {% if credits.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ credits.next_page_number }}" ><i class="fas fa-angle-double-right"></i></a></li>
+                        <a href="?page={{ credits.paginator.num_pages }}" class="btn btn-outline-primary mb-4" style="width:60px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">Last</a>
+                        {% else %}
+                        <li class="page-item disabled"></li>
+                        {% endif %}
+                      </ul>
+                    {% endif %}
+                    </nav>
+                    <!-- /.card-body -->
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+            </div>
+        </div>
+    </section>
+      <!-- /.content -->
+{% endblock main_content %}

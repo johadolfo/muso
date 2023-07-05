@@ -1,0 +1,62 @@
+{% extends 'membre_template/base_template.html' %}
+{% block page_title %} 
+Liste des Cotisations
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12">
+                  <!-- general form elements -->
+         
+                  <!-- /.card -->
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card_title">  Mes Cotisations</h3> : <button type="button" class="btn btn-info" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> Qtite Cot. Credit: {{ qtite_cotcredit }}</button> et 
+                    <button type="button" class="btn btn-dark" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> Qtite Cot. Urg.: {{ qtite_cotijans }}</button> <button type="button" class="btn btn-dark" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> Qtite Cot. Fonct..: {{ qtite_cotfonk }}</button>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap">
+                      <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Type Cotisation</th>
+                            <th>Montant</th>
+                            <th>Interet </th>
+                            <th>Penalite </th>
+                            <th>Balance</th>
+                            <th>Date Fait</th>
+                           
+                         
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for cotisation in cotisations %}
+                        <tr>
+                          <td>{{ cotisation.id }}</td>
+                          <td>{{ cotisation.typecotisation }}</td>
+                          <td>{{ cotisation.montant }}</td>
+                          <td>{{ cotisation.interet }}</td>
+                          <td>{{ cotisation.penalite }}</td>
+                          <td>{{ cotisation.balance }}</td>
+                          <td>{{ cotisation.date_fait }}</td>
+                          
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+    </section>
+      <!-- /.content -->
+{% endblock main_content %}
+
+{% block custom_js %}
+
+{% endblock custom_js%}
+

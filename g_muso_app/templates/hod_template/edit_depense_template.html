@@ -1,0 +1,75 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+Edit Depense | NO DEPENSE : {{ depenses.id }}
+<!-- | Subject Name : {{ subject.subject_name }} | Subject ID : {{ subject.id }} -->
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+                    <!-- general form elements -->
+                <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Edit Depense</h3>
+                      </div>
+                      <!-- /.card-header -->
+                      <!-- form start -->
+                      <form role="form" action="/edit_depense_save" method="post">
+                        {% csrf_token %}
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Numero</label>
+                                <input type="text" class="form-control" name="id" disabled placeholder="Entrer le numero de la depense" value="{{ depenses.id }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Date Depense</label>
+                                <input type="date" class="form-control" name="date_depense" placeholder="Entrer la Date de la depense" value="{{ depenses.date_depense | date:'Y-m-d' }}">
+                                <input type="hidden"  name="depense_id" value="{{ depenses.id }}">
+                            </div>
+                            <div class="form-group">
+                                <label >Description</label>
+                                <textarea class="form-control" rows="5" name="description" > {{ depenses.description }}</textarea>
+                            </div>
+
+                              <div class="form-group">
+                                <label>Montant </label>
+                                <input type="text" class="form-control" name="depense_unit" placeholder="Entrer le montant" value="{{ depenses.depense_unit }}">
+                                </div>
+
+                                <div class="form-group">
+                                  <label>Quantite </label>
+                                  <input type="text" class="form-control" name="quantite_dep" placeholder="Entrer le montant" value="{{ depenses.quantite_dep }}">
+                                  </div>
+                                
+                              
+                          <div class="form-group">
+                            {% if messages %}
+                            <div class="col-12">
+                              {% for message in messages %}
+                              {% if message.tags == 'error' %}
+                              <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% if message.tags == 'success' %}
+                              <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% endfor %}
+                            </div>
+                            {% endif %} 
+                          </div>
+                        </div>
+                        <!-- /.card-body -->
+        
+                        <div class="card-footer">
+                          <button type="submit" class="btn btn-primary btn-block">Edit Credit</button>
+                        </div>
+                      </form>
+                </div>
+                    <!-- /.card -->
+              </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+{% endblock main_content %}

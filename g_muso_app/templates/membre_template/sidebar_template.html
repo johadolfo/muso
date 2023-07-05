@@ -1,0 +1,144 @@
+{% load static %}
+<style>
+  .color_bar {
+      background-color: {{ user.muso.couleur_preferee }};
+      /* Autres propriétés CSS */
+  .color_text {
+      color: {{ user.muso.couleur_text_menu }};
+      /* Autres propriétés CSS */
+  }
+</style>
+<aside class="main-sidebar color_bar elevation-4">
+    <!-- Brand Logo -->
+    <a href="" class="brand-link">
+      <img src="" alt="Mutuel Solidarite" class="brand-image img-circle elevation-3"
+           style="opacity: .8">
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          
+          <img src="{{ membre_obj.profile_pic }}" class="img-circle elevation-2" alt="User Image">
+          
+        </div>
+      </br>
+        <div class="info">
+          <a href="{% url 'membre_profile' %}" class="d-block">{{ user.username }}</a>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+             
+          <li class="nav-item">
+            {% url 'membre_home' as membre_home %}
+            <a href="{{ membre_home }}" class="nav-link {% if request.path == membre_home %} active {% endif %}">
+              <i class="nav-icon fas fa-th" color_text></i>
+              <p class="color_text">
+               Home
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            {% url 'membre_cotisation' as membre_cotisation %}
+            <a href="{{ membre_cotisation }}" class="nav-link {% if request.path == membre_cotisation %} active {% endif %}{% if request.path == membre_cotisation %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+                Mes Cotisations               
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            {% url 'membre_credit' as membre_credit %}
+            <a href="{{ membre_credit }}" class="nav-link {% if request.path == membre_credit %} active {% endif %}{% if request.path == membre_credit %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+                Mes Credits               
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            {% url 'membre_remboursement' as membre_remboursement %}
+            <a href="{{ membre_remboursement }}" class="nav-link {% if request.path == membre_remboursement %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+               Mes Remboursements
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            {% url 'Lesinterets_membre_ajoutes' as Lesinterets_membre_ajoutes %}
+            <a href="{{ Lesinterets_membre_ajoutes }}" class="nav-link {% if request.path == Lesinterets_membre_ajoutes %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+               Les Interets Ajoutes
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            {% url 'membre_apply_leave' as membre_apply_leave %}
+            <a href="{{ membre_apply_leave }}" class="nav-link {% if request.path == membre_apply_leave %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+               Applique Pour Abandon
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            {% url 'membre_feedback' as membre_feedback %}
+            <a href="{{ membre_feedback }}" class="nav-link {% if request.path == membre_feedback %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+               Envoie Un Message
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            {% url 'profile_mview' as profile_mview %}
+            <a href="{% url 'profile_mview' %}" class="nav-link {% if request.path == profile_mview %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+                Message Pour Tous!
+              </p>
+            </a>
+          </li>
+          {% if has_permission %}
+          <li class="nav-item">
+            {% url 'add_depense' as add_depense %}
+            <a href="{% url 'add_depense' %}" class="nav-link {% if request.path == add_depense %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+                Add Cotisation
+              </p>
+            </a>
+          </li>
+          {% endif %}
+            
+          <li class="nav-item">
+            {% url 'user_info' as user_info %}
+            <a href="{% url 'user_info' %}" class="nav-link {% if request.path == user_info %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+                Info User
+              </p>
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>

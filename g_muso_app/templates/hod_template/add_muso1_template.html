@@ -1,0 +1,87 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+Ajouter Une Nouveau MUSO
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+                    <!-- general form elements -->
+                <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Ajouter Credit</h3>
+                      </div>
+                      <!-- /.card-header -->
+                      <!-- form start -->
+                      <form role="form" action="/add_muso_save" method="post">
+                        {% csrf_token %}
+                        <div class="card-body">
+                          <div class="form-group">
+                                <label>Numero</label>
+                                <input type="text" class="form-control" name="numero_credit" placeholder="Entrer le code du muso">
+                          </div>
+                          <div class="form-group">
+                            <label>Sigle</label>
+                            <input type="text" class="form-control" name="sigle" placeholder="Entrer le sigle du muso">
+                          </div>
+                          <div class="form-group">
+                            <label>Nom</label>
+                            <input type="text" class="form-control" name="nom" placeholder="Entrer le nom du muso">
+                          </div>
+                          <div class="form-group">
+                            <label>adresse</label>
+                            <input type="text" class="form-control" name="adresse" placeholder="Entrer l'adresse du muso">
+                          </div>
+                          <div class="form-group">
+                            <label>Telephone</label>
+                            <input type="text" class="form-control" name="telephone" placeholder="Entrer le numero de telephone">
+                          </div>
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="text" class="form-control" name="email" placeholder="Entrer l'email">
+                          </div>
+                          <div class="form-group">
+                            <label>Site Web</label>
+                            <input type="text" class="form-control" name="site_web" placeholder="Entrer le site web ">
+                          </div>
+                          <div class="form-group">
+                            <label>Logo</label>
+                            <input type="file" class="form-control" Required name="logo">
+                          </div>
+                          <div class="form-group">
+                            <label>Date creation</label>
+                            <input type="date" class="form-control" name="date_creation" placeholder="Entrer l'interet ">
+                          </div>
+                          
+
+                          <div class="form-group">
+                            {% if messages %}
+                            <div class="col-12">
+                              {% for message in messages %}
+                              {% if message.tags == 'error' %}
+                              <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% if message.tags == 'success' %}
+                              <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% endfor %}
+                            </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <!-- /.card-body -->
+        
+                        <div class="card-footer">
+                          <button type="submit" class="btn btn-primary btn-block">Add Muso</button>
+                        </div>
+                      </form>
+                </div>
+                    <!-- /.card -->
+              </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+      {% endblock main_content %}

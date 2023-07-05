@@ -1,0 +1,75 @@
+{% load static %}
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="index3.html" class="brand-link">
+      ADMINISTRATION
+
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          <img src="{% static "dist/img/user2-160x160.jpg" %}" class="img-circle elevation-2" alt="User Image">
+        </div>
+        <div class="info">
+          <a href="{% url 'admin_profile' %}" class="d-block">{{ user.username }}</a>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+            <li class="nav-item">
+                {% url 'admin_home' as adm_home %}
+                <a href="{{ adm_home }}" class="nav-link {% if request.path == admin_home %} active {% endif %}">
+                  <i class="nav-icon fas fa-th"></i>
+                  <p>
+                    Home
+                   
+                  </p>
+                </a>
+          </li>
+
+          
+          <li class="nav-item">
+            {% url 'add_muso' as add_muso %}
+            <a href="{% url 'add_muso' %}" class="nav-link {% if request.path == add_muso %} active {% endif %}">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Ajouter un Nouveau MUSO
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            {% url 'add_muso' as add_muso %}
+            <a href="{% url 'manage_muso' %}" class="nav-link {% if request.path == manage_muso %} active {% endif %}">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                LISTE DES MUSO
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            {% url 'manage_user' as manage_user %}
+            <a href="{% url 'manage_user' %}" class="nav-link {% if request.path == manage_user %} active {% endif %}">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Manage Users
+              </p>
+            </a>
+          </li>
+
+          
+          
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>

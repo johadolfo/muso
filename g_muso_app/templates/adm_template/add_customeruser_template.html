@@ -1,0 +1,92 @@
+{% extends 'adm_template/base_template.html' %}
+{% block page_title %} 
+Add New USER
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+                    <!-- general form elements -->
+                <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Ajouter Nouveau Utilisateur</h3>
+                      </div>
+                      <!-- /.card-header -->
+                      <!-- form start -->
+                      <form role="form" action="/add_customuser_save" method="post">
+                        {% csrf_token %}
+                        <div class="card-body">
+                        
+                          <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" class="form-control" name="username" placeholder="Entrer le Username">
+                          </div>
+                          <div class="form-group">
+                            <label >Password</label>
+                            <input type="password" class="form-control" name="password" placeholder="Entrer le mot de pass">
+                          </div>
+                          <div class="form-group">
+                            <label>Email </label>
+                            <input type="email" class="form-control" name="email" placeholder="Entrer le Email">
+                          </div>
+                          <div class="form-group">
+                            <label>First Name </label>
+                            <input type="text" class="form-control" name="firstname" placeholder="Entrer le Nom" >
+                          </div>
+                          <div class="form-group">
+                            <label>Last Name </label>
+                            <input type="text" class="form-control" name="lastname" placeholder="Entrer le Nom" >
+                          </div>
+
+                          <div class="form-group">
+                            <label>Type Utilisateur</label>
+                            <select class="form-control"   name="type_utilisateur">
+                                    <option value="6">Secretaire</option>
+                                    <option value="7">Tresorier(e)</option>
+                                    <option value="4">President</option>
+                                    <option value="5">Agent de Credit</option>
+                                    <option value="1">Administrateur</option>
+                                    <option value="3">Super Administrateur</option>
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <label>MUSO</label>
+                            <select class="form-control" name="muso">
+                                {% for muso in muso %}
+                                    <option value="{{ muso.id }}">{{ muso.nom_muso }}</option>
+                                {% endfor %}
+                            </select>
+                          </div>
+                          
+                          <div class="form-group">
+                            {% if messages %}
+                            <div class="col-12">
+                              {% for message in messages %}
+                              {% if message.tags == 'error' %}
+                              <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% if message.tags == 'success' %}
+                              <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% endfor %}
+                            </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <!-- /.card-body -->
+        
+                        <div class="card-footer">
+                          <button type="submit" class="btn btn-primary btn-block">Add USER</button>
+                        </div>
+                      </form>
+                </div>
+                    <!-- /.card -->
+              </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+      {% endblock main_content %}
