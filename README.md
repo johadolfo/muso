@@ -1,2 +1,2 @@
 # muso
-Mon application pour la gestion des Mutuel de Solidarite
+c'est mon code source pour la gestion d'un mutuel solidarite
