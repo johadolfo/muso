@@ -85,7 +85,10 @@ urlpatterns = [
     path('edit_remboursement_save', HodViews.edit_remboursement_save, name="edit_remboursement_save"),
     path('edit_detailproduct/<str:detailproduct_id>', HodViews.edit_detailproduct, name="edit_detailproduct"),
     path('edit_detailproduct_save', HodViews.edit_detailproduct_save, name="edit_detailproduct_save"),
-    
+
+    #path('edit_tbmuso', HodViews.edit_tbmuso, name="edit_tbmuso"),
+    #path('edit_tbmuso_save<int:tbmuso_id>/', HodViews.edit_tbmuso_save, name='edit_tbmuso_save'),
+
     path('edit_muso', HodViews.edit_muso, name="edit_muso"),
     path('edit_muso_save', HodViews.edit_muso_save, name="edit_muso_save"),
 
@@ -99,8 +102,10 @@ urlpatterns = [
     path('membre_leave_view', HodViews.membre_leave_view, name="membre_leave_view"),
     path('membre_approve_leave/<str:leave_id>', HodViews.membre_approve_leave, name="membre_approve_leave"),
     path('membre_disapprove_leave/<str:leave_id>', HodViews.membre_disapprove_leave, name="membre_disapprove_leave"),
+
     path('admin_profile', HodViews.admin_profile, name="admin_profile"),
     path('admin_profile_save', HodViews.admin_profile_save, name="admin_profile_save"),
+
     path('add_depense', HodViews.add_depense, name="add_depense"),
     path('add_depense_save', HodViews.add_depense_save, name="add_depense_save"),
     path('manage_depense', HodViews.manage_depense, name="manage_depense"),

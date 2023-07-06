@@ -34,6 +34,7 @@ from django.db.models import F, ExpressionWrapper, DecimalField
 from django.db.models.functions import Coalesce
 from django.db.models import Sum, FloatField
 from django.db.models import F, ExpressionWrapper, FloatField, Subquery, OuterRef
+from django.shortcuts import render, get_object_or_404
 
 def admin_home(request):
     current_user = request.user
@@ -81,7 +82,7 @@ def add_membre_save(request):
         return HttpResponse("Method Not Allowed")
     else:
         current_user = request.user
-        muso_id = current_user.muso_id
+        muso_id = current_user.muso
         #code_muso = request.POST.get("muso_id")
         #muso_id = tbmuso.objects.get(id=code_muso)
         prenomp = request.POST.get("prenomp")
@@ -327,7 +328,50 @@ def add_depense_save(request):
         except Exception as e:
             messages.error(request,traceback.format_exc())
             return HttpResponseRedirect(reverse("add_depense"))
+
+
+def edit_muso(request):
+    muso = tbmuso.objects.get(id=request.user.muso_id)
+    return render(request, "hod_template/edit_muso.html", {"muso": muso})
+
+def edit_muso_save(request):
+    if request.method == "POST":
+        sigle = request.POST.get("sigle")
+        nom_muso = request.POST.get("muso_name")
+        adresse_muso = request.POST.get("adresse_muso")
+        telephone_muso = request.POST.get("telephone_muso")
+        site_muso = request.POST.get("site_muso")
+        date_creation_muso = request.POST.get("date_creation")
+        couleur_menu = request.POST.get("colormenu")
+        taux_interet_credit = request.POST.get("taux_interet")
+        couleur_text_menu = request.POST.get("colortext")
         
+        try:
+            musoo = tbmuso.objects.get(id=request.user.muso_id)
+            musoo.sigle = sigle
+            musoo.nom_muso = nom_muso
+            musoo.adresse_muso = adresse_muso
+            musoo.telephone_muso = telephone_muso
+            musoo.taux_interet = taux_interet_credit
+            musoo.site_muso = site_muso
+            musoo.date_creation = date_creation_muso
+
+            if couleur_menu:
+                musoo.couleur_preferee = couleur_menu
+
+            if couleur_text_menu:
+                musoo.couleur_text_menu = couleur_text_menu
+
+            musoo.save()
+
+            messages.success(request, "Successfully updated Muso")
+            return redirect("edit_muso")
+        except:
+            messages.error(request, "Failed to update Muso")
+            return redirect("edit_muso")
+    else:
+        return redirect("edit_muso")
+
 
 def add_cotisationRemplacerMEMBRE_save(request):
     if request.method !="POST":
@@ -1126,8 +1170,6 @@ def edit_depense(request, depense_id):
     depenses = tbdepense.objects.get(id=depense_id)
     return render(request, "hod_template/edit_depense_template.html", {"depenses":depenses})
 
-
-
 def edit_depense_save(request):
 
     if request.method !="POST":
@@ -1152,57 +1194,6 @@ def edit_depense_save(request):
         except:
             messages.error(request,traceback.format_exc())
             return HttpResponseRedirect(reverse("edit_depense",kwargs={"depense_id":depense_id}))
-
-def edit_muso(request):
-    current_user = request.user
-    muso_id = current_user.muso_id
-    muso = tbmuso.objects.get(id=muso_id)
-    return render(request, "hod_template/edit_muso.html", {"muso": muso})
-
-def edit_muso_save(request):
-    current_user = request.user
-    muso_id = current_user.muso_id
-
-    if request.method != "POST":
-        return HttpResponseRedirect(reverse("edit_muso"))
-    else:
-        #code_muso = request.POST.get("depense_id")
-        sigle = request.POST.get("sigle")
-        nom_muso = request.POST.get("nom_muso")
-        adresse_muso = request.POST.get("adresse_muso")
-        telephone_muso = request.POST.get("telephone_muso")
-        site_muso = request.POST.get("site_muso")
-        email_muso = request.POST.get("email_muso")
-        date_creation_muso = request.POST.get("date_creation")
-        couleur_menu = request.POST.get("colorSelect")
-        taux_interet_credit = request.POST.get("taux_interet")
-        couleur_text_menu = request.POST.get("colorSelecttext")
-        try:
-            muso = tbmuso.objects.get(id=muso_id)
-            muso.sigle = sigle
-            muso.nom_muso = nom_muso
-            muso.adresse_muso = adresse_muso
-            muso.telephone_muso = telephone_muso
-            muso.taux_interet = taux_interet_credit
-            muso.site_muso = site_muso
-            muso.email_muso = email_muso
-            muso.date_creation = date_creation_muso
-            
-            # Vérifier si une couleur est sélectionnée, sinon conserver la couleur précédente
-            if couleur_menu:
-                muso.couleur_preferee = couleur_menu
-
-            # Vérifier si une couleur de texte est sélectionnée, sinon conserver la couleur précédente
-            if couleur_text_menu:
-                muso.couleur_text_menu = couleur_text_menu
-
-            muso.save()
-
-            messages.success(request, "MUSO Successfully Updated")
-            return HttpResponseRedirect(reverse("edit_muso"))
-        except:
-            messages.error(request, "Failed to Update MUSO")
-            return HttpResponseRedirect(reverse("edit_muso"))
 
 def manage_session(request):
     return render(request, "hod_template/manage_session_template.html")
