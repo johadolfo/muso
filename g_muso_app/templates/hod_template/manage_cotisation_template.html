@@ -1,6 +1,6 @@
 {% extends 'hod_template/base_template.html' %}
 {% block page_title %} 
-Liste des Cotisations <a href="{% url 'export_cotisation_csv' %}" class="btn btn-primary">Export to CSV</a> <a href="{% url 'add_tbcotisation' %}" class="btn btn-primary" {% if is_button_disabled %}disabled{% endif %}>Ajouter Nouveau Cotisation</a>
+Liste des Cotisations <a href="{% url 'export_cotisation_csv' %}" class="btn btn-primary">Export to CSV</a> <a href="{% url 'add_tbcotisation' %}" class="btn btn-primary" {% if is_button_disabled %}disabled{% endif %}>Ajouter Nouveau Cotisation</a><a href="{% url 'statistique_cotisation' %}" class="btn btn-primary" {% if is_button_disabled %}disabled{% endif %}>Statistique Cotisation</a>
 {% endblock page_title %}
 {% block main_content %}
     <!-- Main content -->

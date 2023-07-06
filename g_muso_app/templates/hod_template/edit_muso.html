@@ -3,19 +3,17 @@
 Edit INFO MUSO
 {% endblock page_title %}
 {% block main_content %}
-    <!-- Main content -->
-    <section class="content">
+  <section class="content">
         <div class="container-fluid">
           <div class="row">
               <div class="col-md-12">
-                    <!-- general form elements -->
+                  
                 <div class="card card-primary">
                       <div class="card-header">
                         <h3 class="card-title">Edit Information Muso</h3>
                       </div>
-                      <!-- /.card-header -->
-                      <!-- form start -->  
-                      <form role="form" action="{% url 'edit_muso_save' %}" method="post">
+                    
+                    <form role="form" action="{% url 'edit_muso_save' %}" method="post">
                         
                         {% csrf_token %}
                       
@@ -145,58 +143,17 @@ Edit INFO MUSO
                             {% endif %}
                           </div>
                         </div>
-                        <!-- /.card-body -->
+                      
         
                         <div class="card-footer">
                           <button type="submit" class="btn btn-primary btn-block">Save Modification</button>
                         </div>
                         
-                      </form>
+                    </form>
                 </div>
-                    <!-- /.card -->
+           
               </div>
           </div>
         </div>
-      </section>
-      <!-- /.content -->
-
+  </section>
 {% endblock main_content %}
-
-{% block custom_js %}
-<script>
-      
-      const colorSelect = document.getElementById('colorSelect');
-      const colors = [
-        '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff',
-        '#800000', '#008000', '#000080', '#808000', '#800080', '#008080',
-        '#ff8000', '#8000ff', '#00ff80', '#ff0080', '#80ff00', '#0080ff',
-        '#ff8080', '#ffffff'
-      ];
-
-      for (let i = 0; i < colors.length; i++) {
-        const colorOption = document.createElement('option');
-        colorOption.value = colors[i];
-        colorOption.style.backgroundColor = colors[i];
-        colorSelect.appendChild(colorOption);
-      }
-      colorSelect.value = '#ff0000'; // Définit la couleur rouge comme valeur par défaut
-</script>
-
-<script>
-  const colorSelecttext = document.getElementById('colorSelecttext');
-  const colorstext = [
-    '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff',
-    '#800000', '#008000', '#000080', '#808000', '#800080', '#008080',
-    '#ff8000', '#8000ff', '#00ff80', '#ff0080', '#80ff00', '#0080ff',
-    '#ff8080', '#ffffff'
-  ];
-
-  for (let i = 0; i < colors.length; i++) {
-    const colorOption = document.createElement('option');
-    colorOption.value = colorstext[i];
-    colorOption.style.backgroundColor = colorstext[i];
-    colorSelecttext.appendChild(colorOption);
-  }
-  colorSelect.value = '#ff0000'; // Définit la couleur rouge comme valeur par défaut
-</script>
-{% endblock custom_js %}

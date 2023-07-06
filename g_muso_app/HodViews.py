@@ -866,6 +866,39 @@ def statistique_remboursement(request):
     remboursement_info = paginator.get_page(page)
     return render(request, "hod_template/statistique_remboursement_template.html", { "remboursement_info":remboursement_info })
 
+def statistique_cotisation(request):
+    current_user = request.user
+    muso_id = current_user.muso_id
+
+    query = """
+        select a.id, codep,  nomp || ' ' || prenomp AS nom_membre, sum(case when typecotisation = "Fond de Credit" then montant else 0 END) as Montantcredit, sum(case when typecotisation = "Fond de Fonctionnement" then montant END) as MontantFonct, sum(case when typecotisation = "Fond d'Urgence" then montant else 0 END) as MontantUrgence, sum(interet) as MontantInteret,sum(penalite) as penalite, (sum(interet)+ sum(case when typecotisation = "Fond de Credit" then montant else 0 END)+sum(case when typecotisation = "Fond d'Urgence" then montant else 0 END)) as Montanttotal  from g_muso_app_membre a, g_muso_app_tbcotisation b, g_muso_app_customuser c where code_membre_id=a.id and a.admin_id=c.id and c.muso_id = %s group by code_membre_id 
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, [int(muso_id)])
+        cotisation_info = cursor.fetchall()
+
+    if 'q' in request.GET:
+        q = request.GET['q']
+        queryparametre = """
+            select a.id, codep,  nomp || ' ' || prenomp AS nom_membre, sum(case when typecotisation = "Fond de Credit" then montant else 0 END) as Montantcredit, sum(case when typecotisation = "Fond de Fonctionnement" then montant END) as MontantFonct, sum(case when typecotisation = "Fond d'Urgence" then montant else 0 END) as MontantUrgence, sum(interet) as MontantInteret,sum(penalite) as penalite, (sum(interet)+ sum(case when typecotisation = "Fond de Credit" then montant else 0 END)+sum(case when typecotisation = "Fond d'Urgence" then montant else 0 END)) as Montanttotal  from g_muso_app_membre a, g_muso_app_tbcotisation b, g_muso_app_customuser c where code_membre_id=a.id and a.admin_id=c.id and c.muso_id = %s and a.codep=%s group by code_membre_id 
+
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(queryparametre, [int(muso_id), q])
+            all_remboursement_info = cursor.fetchall()
+
+        #all_remboursement_info = tbremboursement.objects.filter(  Q(codecredit_id=q) ).values('codecredit_id').annotate(total=Count('codecredit_id'),faites_par__admin__muso = muso_id, sum=Sum('capital_remb')).order_by('-date_remb')
+    else:
+        #all_remboursement_info = tbremboursement.objects.filter(faites_par__admin__muso = muso_id).select_related("tbcredit").values('codecredit_id').annotate(total=Count('codecredit_id'), sum=Sum('capital_remb')).order_by('-date_remb')
+        all_remboursement_info = cotisation_info
+    paginator = Paginator(all_remboursement_info,15)
+    page = request.GET.get('page')
+    cotisation_info = paginator.get_page(page)
+    return render(request, "hod_template/statistique_cotisation_template.html", { "cotisation_info":cotisation_info })
+
+
 def interets_ajoutes(request):
     current_user = request.user
     muso_id = current_user.muso
@@ -1600,6 +1633,31 @@ def export_detailalimentaire_csv(request):
     for item in my_data:
         writer.writerow([item.no, item.codecredit, item.description,item.quantite_prod, item.prix_unitaire, item.prix_total, item.frais_transport, item.prix_de_revient, item.prix_de_vente]) # Add data rows
     return response
+
+def export_statistique_cotisation_csv(request):
+    current_user = request.user
+    muso_id = str(current_user.muso_id)
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="statistique_cotisation.csv"'
+
+    writer = csv.writer(response)
+    # depense=tbdepense(date_depense=date_depense,  description=description, depense_unit=float(depense_unit), quantite_dep=float(quantite_dep), muso_id=muso_id)
+    
+    writer.writerow(['ID','code_membre', 'nom_membre', 'montant_caisse_verte', 'montant_caisse_rouge', 'fond_urgence', 'montant_interet', 'montant_penalite', 'montant_penalite']) # Add column headers
+    #my_data = tbdepense.objects.filter(muso_id=current_user.muso)
+    query = """
+        select a.id, codep,  nomp || ' ' || prenomp AS nom_membre, sum(case when typecotisation = "Fond de Credit" then montant else 0 END) as Montantcredit, sum(case when typecotisation = "Fond de Fonctionnement" then montant END) as MontantFonct, sum(case when typecotisation = "Fond d'Urgence" then montant else 0 END) as MontantUrgence, sum(interet) as MontantInteret,sum(penalite) as penalite, (sum(interet)+ sum(case when typecotisation = "Fond de Credit" then montant else 0 END)+sum(case when typecotisation = "Fond d'Urgence" then montant else 0 END)) as Montanttotal  from g_muso_app_membre a, g_muso_app_tbcotisation b, g_muso_app_customuser c where code_membre_id=a.id and a.admin_id=c.id and c.muso_id = %s group by code_membre_id 
+    """
+    with connection.cursor() as cursor:
+        cursor.execute(query, [muso_id])
+        my_data = cursor.fetchall()
+
+    for item in my_data:
+        writer.writerow([item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8]]) # Add data rows
+            #writer.writerow([item.codecredit_id, item.quantite_remboursement, item.Qtee_restant, item.montant_total_rembourse, item.montant_total_Restant, item.total_interet, item.total_interet_restant, item.total_penalite]) # Add data rows
+    return response
+
 
 def export_statistique_remboursement_csv(request):
     current_user = request.user

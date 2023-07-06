@@ -12,9 +12,8 @@
     <!-- Brand Logo -->
     <div style="display: flex; align-items: center;">
       <img src="{{ user.muso.logo_muso }}" class="img-circle elevation-2" alt="User Image" style="width: 100px; height: 100px;">
-      {% url 'edit_muso' as edit_muso %}
-      <a href="{{ edit_muso }}" class="d-block"> <h2 style="margin-left: 10px; color:aqua;">{{ user.muso.sigle }}</h2></a>
-      
+     
+      <a href="{% url 'edit_muso' %}" class="d-block"> <h2 style="margin-left: 10px; color:aqua;">{{ user.muso.sigle }}</h2></a>
     </div>
 
     <!-- Sidebar -->
