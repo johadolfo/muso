@@ -1,6 +1,6 @@
 {% extends 'hod_template/base_template.html' %}
 {% block page_title %} 
-Liste des Credits Alimentaire
+Liste des Credits Alimentaire <a href="{% url 'manage_detailalimentaire' %}" class="btn btn-primary">Liste Deatils Alimentaire</a>
 {% endblock page_title %}
 {% block main_content %}
     <!-- Main content -->
@@ -13,6 +13,7 @@ Liste des Credits Alimentaire
                       <h3 class="card-title">Credits Details: <button type="button" class="btn btn-success" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> QTE CREDIT : {{ qte_credit }}</button> Se Decompose En
                         <button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> QTE CREDIT FINI: {{ qte_credit_fini }}</button> et 
                         <button type="button" class="btn btn-warning" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> QTE CREDIT EN COUR: {{ qte_credit_en_cours }}</button> 
+                        
 
                       </h3>
       

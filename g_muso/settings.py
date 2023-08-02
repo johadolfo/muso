@@ -15,6 +15,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 import smtplib
+#from django.utils.deprecation import MiddlewareMixin
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,8 +32,9 @@ DEBUG = True
 #ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.0.116']
 
-MEDIA_URL="/media/"
-MEDIA_ROOT=os.path.join(BASE_DIR, "media")
+MEDIA_URL='/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR, 'media')
+
 
 STATIC_URL="/static/"
 STATIC_ROOT=os.path.join(BASE_DIR, "static")
@@ -51,6 +53,15 @@ INSTALLED_APPS = [
     
 ]
 
+'''class VisitorTrackingMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        # Increment the visitor count in the session for each new request
+        if 'visitor_count' not in request.session:
+            request.session['visitor_count'] = 1
+        else:
+            request.session['visitor_count'] += 1'''
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -60,6 +71,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'g_muso_app.LoginCheckMiddleWare.LoginCheckMiddleWare',
+    #'g_muso_app.VisitorTrackingMiddleware.VisitorTrackingMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'g_muso.urls'

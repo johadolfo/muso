@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 import traceback
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
-from g_muso_app.models import CustomUser, Membre, tbcotisation, tbcredit,tbremboursement,FeedBackMembre,LeaveReportMembre,CustomUser, tbdepense, tbdetailproduit, tbdetailcredit, Comment, tbmuso
+from g_muso_app.models import CustomUser, Membre, tbcotisation, tbcredit,tbremboursement,FeedBackMembre,LeaveReportMembre,CustomUser, tbdepense, tbdetailproduit, tbdetailcredit, Comment, tbmuso, tbtypecotisation
 from .forms import EditMembreForm
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -17,7 +17,7 @@ from django.db.models import F
 import io
 import xlrd
 import datetime , openpyxl
-import pandas as pd
+
 from django.shortcuts import redirect
 from django.db.models.functions import Coalesce
 from datetime import datetime, timedelta, date
@@ -35,40 +35,66 @@ from django.db.models.functions import Coalesce
 from django.db.models import Sum, FloatField
 from django.db.models import F, ExpressionWrapper, FloatField, Subquery, OuterRef
 from django.shortcuts import render, get_object_or_404
+import random
 
 def admin_home(request):
     current_user = request.user
-    #membre_info=Membre.objects.get(id=current_user.id)
-    #print(membre_info.muso,flat=True)
   
-    #membre_count=Membre.objects.filter(membre_actif='True', muso=membre_info.muso_id).count()
+    #num_visitor = random.randint(0, 100000000)
+    num_visitor = request.session.get('visitor_count', 0)
+
     membre_count=Membre.objects.filter(membre_actif='True', admin__muso=current_user.muso).count()
     cotisation_info=tbcotisation.objects.all().filter(code_membre__admin__muso=current_user.muso,code_membre__membre_actif='True' )
     montant_tot = sum(cotisation_info.values_list('montant', flat=True))
-    
-    _credit  =tbcotisation.objects.filter(typecotisation__icontains='Fond de Credit', code_membre__admin__muso=current_user.muso,code_membre__membre_actif='True')
-    montant_ccredit = sum(_credit.values_list('montant', flat=True))
 
-    _ijans  =tbcotisation.objects.filter(typecotisation__icontains="Fond d'Urgence", code_membre__admin__muso=current_user.muso,code_membre__membre_actif='True')
-    montant_ijans = sum(_ijans.values_list('montant', flat=True))
+    caisseverte = tbtypecotisation.objects.get(reference='cv', cotisation_muso=current_user.muso)
+    caisserouge = tbtypecotisation.objects.get(reference='cr', cotisation_muso=current_user.muso)
+    caissebleue = tbtypecotisation.objects.get(reference='cb', cotisation_muso=current_user.muso)
 
-    _fonctionnement  =tbcotisation.objects.filter(typecotisation__icontains='Fond de Fonctionnement', code_membre__admin__muso=current_user.muso,code_membre__membre_actif='True')
-    montant_fonk = sum(_fonctionnement.values_list('montant', flat=True))
 
-    #rembourseent_infor=tbremboursement.objects.all().filter(faites_par__admin__muso=current_user.muso)
-    #interet_tot = format(sum(rembourseent_infor.values_list('interet_remb', flat=True)),'.2f')
+    if caisseverte:
+        _credit  =tbcotisation.objects.filter(typecotisation=caisseverte.nom_cotisation, code_membre__admin__muso=current_user.muso,code_membre__membre_actif='True')
+        montant_ccredit = sum(_credit.values_list('montant', flat=True))
+    else:
+        montant_ccredit =0
+
+    if caissebleue:
+        _ijans  =tbcotisation.objects.filter(typecotisation=caissebleue.nom_cotisation, code_membre__admin__muso=current_user.muso,code_membre__membre_actif='True')
+        montant_ijans = sum(_ijans.values_list('montant', flat=True))
+    else:
+        montant_ijans=0
+
+    if caisserouge:
+        _fonctionnement  =tbcotisation.objects.filter(typecotisation=caisserouge.nom_cotisation, code_membre__admin__muso=current_user.muso,code_membre__membre_actif='True')
+        montant_fonk = sum(_fonctionnement.values_list('montant', flat=True))
+    else:
+        montant_fonk=0
+
+
     cotisation_int = tbcotisation.objects.filter(code_membre__admin__muso=current_user.muso,code_membre__membre_actif='True')
     interet_tot = format(sum(cotisation_int.values_list('interet', flat=True)),'.2f')
 
-    valeur2 = tbremboursement.objects.filter(faites_par__admin__muso=2).values('date_remb').order_by('date_remb').annotate(sum=Sum('interet_remb'))
+    valeur2 = tbremboursement.objects.filter(faites_par__admin__muso=current_user.muso).values('date_remb').order_by('date_remb').annotate(sum=Sum('interet_remb'))
   
     credit_info = tbcredit.objects.filter(credit_status__icontains="En cour", code_membre__admin__muso=current_user.muso)
     montant_credit = sum(credit_info.values_list('montant_credit', flat=True))
-    #remb_info = tbremboursement.objects.all()
+
     remb_info = tbremboursement.objects.filter(faites_par__admin__muso=current_user.muso, codecredit__credit_status__icontains="En cour").values('codecredit_id').order_by('codecredit_id').annotate(capital_remb=Sum('capital_remb'))
     montant_rembourse = format(sum(remb_info.values_list('capital_remb', flat=True)),'.2f')
 
-    return render(request, "hod_template/home_content.html",{ "credit_info":credit_info, "membre_count":membre_count, "montant_tot":montant_tot, "montant_credit":montant_credit,"montant_rembourse":montant_rembourse, "remb_info":remb_info, "montant_ccredit":montant_ccredit, "montant_ijans":montant_ijans, "montant_fonk":montant_fonk , "valeur2":valeur2, "interet_tot":interet_tot})
+    remboursement_info = tbremboursement.objects.filter(
+    faites_par_id__admin_id__muso_id=current_user.muso
+    ).values('date_remb').annotate(
+        total_interet=Sum('interet_remb'),
+        total_penalite=Sum('penalite'),
+        montant_total_rembourse=Sum('montant_a_remb') + Sum('interet_remb'),
+        quantite_remboursement=Count('id')
+    ).order_by('date_remb')
+    cotisation_info = tbcotisation.objects.filter(code_membre__admin_id__muso_id=current_user.muso)
+    penalite_total_cot =sum(cotisation_info.values_list('penalite', flat=True))
+    penalite_total = sum(remboursement_info.values_list('penalite', flat=True)) + penalite_total_cot
+
+    return render(request, "hod_template/home_content.html",{ "credit_info":credit_info, "membre_count":membre_count, "montant_tot":montant_tot, "montant_credit":montant_credit,"montant_rembourse":montant_rembourse, "remb_info":remb_info, "montant_ccredit":montant_ccredit, "montant_ijans":montant_ijans, "montant_fonk":montant_fonk , "valeur2":valeur2, "interet_tot":interet_tot, "num_visitor":num_visitor, "penalite_total":penalite_total})
    
 def add_personne(request):
     pass
@@ -83,8 +109,6 @@ def add_membre_save(request):
     else:
         current_user = request.user
         muso_id = current_user.muso
-        #code_muso = request.POST.get("muso_id")
-        #muso_id = tbmuso.objects.get(id=code_muso)
         prenomp = request.POST.get("prenomp")
         nomp = request.POST.get("nomp")
         codep = request.POST.get("codep")
@@ -140,20 +164,16 @@ def add_membre_save(request):
             messages.error(request,traceback.format_exc())
             return HttpResponseRedirect(reverse("add_membre"))
 
-
 #@login_required
 def add_tbcotisation(request):
-    #if not request.user.has_perm('g_muso_app.add_tbcotisation'):
-        #is_button_disabled = False
-        #return HttpResponseForbidden('Vous n\'avez pas l\'autorisation d\'accéder à cette page.')
-    # Le reste du code pour traiter la vue lorsqu'un utilisateur a l'autorisation
     is_button_disabled = True
     current_user = request.user
     muso_id = current_user.muso_id
-    cotisations = tbcotisation.objects.all()
+    cotisations = tbcotisation.objects.filter(code_membre__admin__muso = muso_id)
     membre_info = Membre.objects.filter(admin__muso=current_user.muso)
     membres = CustomUser.objects.filter(user_type=2, muso=current_user.muso)
-    return render(request, "hod_template/add_cotisation_template.html", {"is_button_disabled": is_button_disabled, "membres":membres, "cotisations":cotisations, "membre_info":membre_info})
+    type_cotisation = tbtypecotisation.objects.filter(cotisation_muso=muso_id)
+    return render(request, "hod_template/add_cotisation_template.html", {"is_button_disabled": is_button_disabled, "membres":membres, "cotisations":cotisations, "membre_info":membre_info, "type_cotisation":type_cotisation})
 
 def add_cotisation_save(request):
   
@@ -184,7 +204,32 @@ def add_cotisation_save(request):
             messages.error(request,traceback.format_exc())
             return HttpResponseRedirect(reverse("add_tbcotisation"))
         
+def add_more_cotisation(request):
+    current_user = request.user
+    membre_info = Membre.objects.filter(admin__muso=current_user.muso, membre_actif='True')
+    return render(request, "hod_template/add_more_cotisation.html", { "membre_info":membre_info})
 
+def add_more_cotisation_save(request):
+        if request.method == 'POST':
+            try:
+                membres = request.POST.getlist('membre_info[]')
+                date = request.POST['date']
+                montant = request.POST['montant']
+                interet = request.POST['interet']
+                type_cotisation = request.POST['type']
+                
+                # Sauvegarder les cotisations pour chaque membre sélectionné
+                for membre_id in membres:
+                    membre = Membre.objects.get(id=membre_id)
+                    cotisation = tbcotisation(typecotisation=type_cotisation, montant=float(montant), interet=float(interet), balance=0, date_fait=date, code_membre=membre, penalite=0, recu_par=request.user.username)
+                    cotisation.save()
+            
+                messages.success(request,"Successfully ")
+                return HttpResponseRedirect(reverse("add_more_cotisation")) 
+            except Exception as e:
+                messages.error(request,traceback.format_exc())
+                return HttpResponseRedirect(reverse("add_more_cotisation"))
+    
 def add_credit(request):
     current_user = request.user
     muso_id = current_user.muso_id
@@ -193,8 +238,6 @@ def add_credit(request):
     membres = CustomUser.objects.filter(user_type=2, muso=current_user.muso_id)
     muso_idd = str(muso_id)
     interet_muso = tbmuso.objects.get(id=muso_idd)
-    #interet_muso = tbmuso.objects.filter(id=muso_idd)
-    #print(muso_idd)
     return render(request, "hod_template/add_credit_template.html", {"membres":membres, "credits":credits, "membre_info":membre_info, "interet_muso":interet_muso})
 
 def add_credit_save(request):
@@ -214,7 +257,6 @@ def add_credit_save(request):
         commentaire = request.POST.get("commentaire")
         valider_par = request.POST.get("valider_par")
        
-
         try:
             credit=tbcredit(numero=numero_credit, date_credit=date_credit, nbre_de_mois=nbre_de_mois,date_debut=date_debut, date_fin=date_fin, montant_credit=float(montant_recu), interet_credit=float(interet_recu), code_membre=code_membre, commentaire=commentaire, valider_par=valider_par)
             credit.save()
@@ -302,7 +344,6 @@ def add_detailalimentaire_save(request):
             messages.error(request,traceback.format_exc())
             return HttpResponseRedirect(reverse("add_detailalimentaire"))
 
-
 def add_depense(request):
     depenses = tbdepense.objects.all()
     return render(request, "hod_template/add_depense_template.html", {"depenses":depenses})
@@ -330,18 +371,18 @@ def add_depense_save(request):
             return HttpResponseRedirect(reverse("add_depense"))
 
 
-def edit_muso(request):
+def edit_miso(request):
     muso = tbmuso.objects.get(id=request.user.muso_id)
     return render(request, "hod_template/edit_muso.html", {"muso": muso})
 
-def edit_muso_save(request):
+def edit_miso_save(request):
     if request.method == "POST":
         sigle = request.POST.get("sigle")
         nom_muso = request.POST.get("muso_name")
         adresse_muso = request.POST.get("adresse_muso")
         telephone_muso = request.POST.get("telephone_muso")
         site_muso = request.POST.get("site_muso")
-        date_creation_muso = request.POST.get("date_creation")
+        #date_creation_muso = request.POST.get("date_creation")
         couleur_menu = request.POST.get("colormenu")
         taux_interet_credit = request.POST.get("taux_interet")
         couleur_text_menu = request.POST.get("colortext")
@@ -354,7 +395,7 @@ def edit_muso_save(request):
             musoo.telephone_muso = telephone_muso
             musoo.taux_interet = taux_interet_credit
             musoo.site_muso = site_muso
-            musoo.date_creation = date_creation_muso
+           
 
             if couleur_menu:
                 musoo.couleur_preferee = couleur_menu
@@ -365,14 +406,15 @@ def edit_muso_save(request):
             musoo.save()
 
             messages.success(request, "Successfully updated Muso")
-            return redirect("edit_muso")
-        except:
-            messages.error(request, "Failed to update Muso")
-            return redirect("edit_muso")
-    else:
-        return redirect("edit_muso")
+        except tbmuso.DoesNotExist:
+            messages.error(request, "Muso does not exist")
+        except Exception as e:
+            messages.error(request, str(e))
 
+        return redirect("edit_miso")
 
+    return redirect("edit_miso")
+    
 def add_cotisationRemplacerMEMBRE_save(request):
     if request.method !="POST":
         return HttpResponse("Method Not Allowed")
@@ -396,7 +438,6 @@ def add_cotisationRemplacerMEMBRE_save(request):
         except Exception as e:
             messages.error(request,traceback.format_exc())
             return HttpResponseRedirect(reverse("add_cotisation"))
-
         
 def add_cotisationnouveauMEMBRE_save(request):
     if request.method != "POST":
@@ -535,8 +576,7 @@ def add_cotisationnouveauMEMBRE_save(request):
             except Exception as e:
                 messages.error(request, traceback.format_exc())
                 return HttpResponseRedirect(reverse("add_tbcotisation"))
-              
-             
+                           
 def manage_muso(request):
     pass
    
@@ -563,23 +603,30 @@ def manage_membre(request):
 
 #@login_required
 def view_tbcotisation(request):
-
     is_button_disabled = True
     current_user = request.user
     muso_id = current_user.muso_id
-    cotisations = tbcotisation.objects.filter(code_membre__admin__muso = muso_id).order_by('-date_fait')
-    
+    cotisations = tbcotisation.objects.filter(code_membre__admin__muso=muso_id).order_by('-date_fait')
+
     if 'q' in request.GET:
         q = request.GET['q']
-        id_membre = Membre.objects.raw('select id from membre  where codep =%s', [q])
-        all_cotisation_list = tbcotisation.objects.filter( Q(typecotisation__icontains=q) | Q(date_fait__icontains=q) | Q(id__icontains=id_membre)).order_by('-date_fait')
+        id_membre = Membre.objects.raw('select id from membre where codep = %s', [q])
+        all_cotisation_list = tbcotisation.objects.filter(Q(code_membre__admin__muso=muso_id), Q(typecotisation__icontains=q) | Q(date_fait__icontains=q) | Q(id__icontains=id_membre)).order_by('-date_fait')
     else:
-        all_cotisation_list = tbcotisation.objects.filter(code_membre__admin__muso = muso_id).order_by('-date_fait')
-    paginator = Paginator(all_cotisation_list,25)
+        all_cotisation_list = tbcotisation.objects.filter(code_membre__admin__muso=muso_id).order_by('-date_fait')
+
+    items_per_page = int(request.GET.get('items_per_page', 25))
+
+    paginator = Paginator(all_cotisation_list, items_per_page)
     page = request.GET.get('page')
     cotisations = paginator.get_page(page)
-    return render(request, "hod_template/manage_cotisation_template.html", { "cotisations":cotisations, "is_button_disabled": is_button_disabled })
 
+    return render(request, "hod_template/manage_cotisation_template.html", {
+        "cotisations": cotisations,
+        "is_button_disabled": is_button_disabled,
+        "items_per_page_choices": [(10, '10'), (25, '25'), (50, '50'), (100, '100'), (250, '250')],
+        "items_per_page": items_per_page,
+    })
 
 def manage_credit(request):
     #credits = tbcredit.objects.filter(date_credit__iso_year=2021)
@@ -623,7 +670,6 @@ def liste_credit_encour(request):
     
     return render(request, "hod_template/liste_creditencour_template.html", { "credits":credits, "qte_credit":qte_credit  })
 
-
 def manage_creditalimentaire(request):
     current_user = request.user
     muso_id = current_user.muso_id
@@ -660,7 +706,6 @@ def manage_detailalimentaire(request):
     detalimentaires = paginator.get_page(page)
     return render(request, "hod_template/manage_detailalimentaire_template.html", {"detalimentaires": detalimentaires})
 
-
 def manage_remboursement(request):
     current_user = request.user
     muso_id = current_user.muso_id
@@ -684,7 +729,7 @@ def manage_depense(request):
 
     if 'q' in request.GET:
         q = request.GET['q']
-        all_depense_list = tbdepense.objects.filter(muso_id=muso_id  & Q(id=q)).order_by('-date_depense')
+        all_depense_list = tbdepense.objects.filter(Q(muso_id=muso_id), Q(id=q)).order_by('-date_depense')
     else:
         all_depense_list = tbdepense.objects.filter(muso_id=muso_id).order_by('-date_depense')
     paginator = Paginator(all_depense_list,15)
@@ -802,7 +847,6 @@ def statistique_credit(request):
     credit_info = paginator.get_page(page)
     return render(request, "hod_template/statistique_credit_template.html", { "credit_info":credit_info, "result_tot":result_tot, "interet_anticipe":interet_anticipe })
 
-
 def statistique_remboursement(request):
     current_user = request.user
     muso_id = current_user.muso_id
@@ -870,21 +914,23 @@ def statistique_cotisation(request):
     current_user = request.user
     muso_id = current_user.muso_id
 
+    caisseverte = tbtypecotisation.objects.get(reference='cv', cotisation_muso=current_user.muso)
+    caisserouge = tbtypecotisation.objects.get(reference='cr', cotisation_muso=current_user.muso)
+    caissebleue = tbtypecotisation.objects.get(reference='cb', cotisation_muso=current_user.muso)
+
     query = """
-        select a.id, codep,  nomp || ' ' || prenomp AS nom_membre, sum(case when typecotisation = "Fond de Credit" then montant else 0 END) as Montantcredit, sum(case when typecotisation = "Fond de Fonctionnement" then montant END) as MontantFonct, sum(case when typecotisation = "Fond d'Urgence" then montant else 0 END) as MontantUrgence, sum(interet) as MontantInteret,sum(penalite) as penalite, (sum(interet)+ sum(case when typecotisation = "Fond de Credit" then montant else 0 END)+sum(case when typecotisation = "Fond d'Urgence" then montant else 0 END)) as Montanttotal  from g_muso_app_membre a, g_muso_app_tbcotisation b, g_muso_app_customuser c where code_membre_id=a.id and a.admin_id=c.id and c.muso_id = %s group by code_membre_id 
+        select a.id, codep,  nomp || ' ' || prenomp AS nom_membre, sum(case when typecotisation = %s then montant else 0 END) as Montantcredit, sum(case when typecotisation = %s then montant END) as MontantFonct, sum(case when typecotisation = %s then montant else 0 END) as MontantUrgence, sum(interet) as MontantInteret,sum(penalite) as penalite, (sum(interet)+ sum(case when typecotisation = %s then montant else 0 END)+sum(case when typecotisation = %s then montant else 0 END)) as Montanttotal  from g_muso_app_membre a, g_muso_app_tbcotisation b, g_muso_app_customuser c where code_membre_id=a.id and a.admin_id=c.id and c.muso_id = %s group by code_membre_id 
     """
 
     with connection.cursor() as cursor:
-        cursor.execute(query, [int(muso_id)])
+        cursor.execute(query, [caisseverte.nom_cotisation, caisserouge.nom_cotisation, caissebleue.nom_cotisation, caisseverte.nom_cotisation, caissebleue.nom_cotisation, int(muso_id)])
         cotisation_info = cursor.fetchall()
 
     if 'q' in request.GET:
         q = request.GET['q']
         queryparametre = """
             select a.id, codep,  nomp || ' ' || prenomp AS nom_membre, sum(case when typecotisation = "Fond de Credit" then montant else 0 END) as Montantcredit, sum(case when typecotisation = "Fond de Fonctionnement" then montant END) as MontantFonct, sum(case when typecotisation = "Fond d'Urgence" then montant else 0 END) as MontantUrgence, sum(interet) as MontantInteret,sum(penalite) as penalite, (sum(interet)+ sum(case when typecotisation = "Fond de Credit" then montant else 0 END)+sum(case when typecotisation = "Fond d'Urgence" then montant else 0 END)) as Montanttotal  from g_muso_app_membre a, g_muso_app_tbcotisation b, g_muso_app_customuser c where code_membre_id=a.id and a.admin_id=c.id and c.muso_id = %s and a.codep=%s group by code_membre_id 
-
         """
-
         with connection.cursor() as cursor:
             cursor.execute(queryparametre, [int(muso_id), q])
             all_remboursement_info = cursor.fetchall()
@@ -897,7 +943,6 @@ def statistique_cotisation(request):
     page = request.GET.get('page')
     cotisation_info = paginator.get_page(page)
     return render(request, "hod_template/statistique_cotisation_template.html", { "cotisation_info":cotisation_info })
-
 
 def interets_ajoutes(request):
     current_user = request.user
@@ -1376,35 +1421,6 @@ def import_datadepensee_csv(request):
 
     return render(request, 'manage_depense_template.html')
 
-def import_datadepenses_csv(request):
-    if request.method == 'POST' and request.FILES.get('excel_file'):
-        excel_file = request.FILES['excel_file']
-        try:
-            # Read the Excel file using Pandas
-            df = pd.read_excel(excel_file)
-
-            # Iterate over each row and create a MyModel object for each row
-            for index, row in df.iterrows():
-                obj = tbdepense(
-                    #field1=row['Column1'],
-                    #field2=row['Column2'],
-                    date_depense=row[0],
-                    description=row[1],
-                    depense_unit=row[2],
-                    quantite_dep=row[3]
-                    # Add more fields here as necessary
-                )
-                obj.full_clean()  # Validate the object
-                obj.save()  # Save the object to the database
-
-            return render(request, 'manage_depense_template.html', {'message': 'Excel data imported successfully.'})
-
-        except Exception as e:
-            # Handle any exceptions that may occur during the import process
-            return render(request, 'manage_depense_template.html', {'message': f'Error importing Excel data: {e}'})
-
-    return render(request, 'manage_depense_template.html')
-
 def import_data(request):
   if request.method == 'POST':
     file = request.FILES['file']
@@ -1658,7 +1674,6 @@ def export_statistique_cotisation_csv(request):
             #writer.writerow([item.codecredit_id, item.quantite_remboursement, item.Qtee_restant, item.montant_total_rembourse, item.montant_total_Restant, item.total_interet, item.total_interet_restant, item.total_penalite]) # Add data rows
     return response
 
-
 def export_statistique_remboursement_csv(request):
     current_user = request.user
     muso_id = str(current_user.muso_id)
@@ -1698,8 +1713,6 @@ def export_statistique_remboursement_csv(request):
         writer.writerow([item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7]]) # Add data rows
             #writer.writerow([item.codecredit_id, item.quantite_remboursement, item.Qtee_restant, item.montant_total_rembourse, item.montant_total_Restant, item.total_interet, item.total_interet_restant, item.total_penalite]) # Add data rows
     return response
-
-
 
 def export_statistique_credit_csv(request):
     current_user = request.user
@@ -1807,9 +1820,7 @@ def CalculateurPretView(request):
             tbdetailcredit.objects.create(date_pret=derniersam, montant_pret=montant_pret, montant_capital=capital, montant_interet=interet, total_montant_jr=total, total_montant_rest=montant_restant,codecredit_id=code_pret)
     else: 
         nombre_mois = 1
-    # Récupérez tous les paiements de la base de données
-    #creditalimentaires = tbcredit.objects.filter(Q(numero__in=tbdetailproduit.objects.filter(codecredit_id__in=tbcredit.objects.values('numero')).values('codecredit_id')) &Q(code_membre_id__in=Membre.objects.filter(admin_id__in=CustomUser.objects.filter(muso_id=muso_id).values('id')).values('id'))).order_by('-date_credit')
-    
+   
     paiements = tbdetailcredit.objects.filter(Q(codecredit_id__in=tbcredit.objects.filter( code_membre_id__in=Membre.objects.filter(admin_id__in=CustomUser.objects.filter(muso_id=muso_id))).values('numero')))
 
     # Return the appropriate HttpResponse
@@ -1847,8 +1858,6 @@ def get_credit_info(request):
     }
     return JsonResponse(data)
 
-
-
 def add_comments_save(request):
     current_user = request.user
     muso_id = current_user.muso
@@ -1874,11 +1883,18 @@ def profile_view(request):
     current_user = request.user
     muso_id = current_user.muso
     # Logic for the profile view
-    comments = Comment.objects.filter(author_id=F('author_id__id'), muso_id_id=muso_id).order_by('-created_at').values('id', 'text', 'created_at', 'author_id__nomp', 'author_id__prenomp')
+    comments = Comment.objects.filter(author_id=F('author_id__id'), muso_id_id=muso_id).order_by('-created_at').values('id', 'text', 'created_at','author_id__profile_pic', 'author_id__nomp', 'author_id__prenomp')
     #comments = Comment.objects.annotate(champ_concatene=ExpressionWrapper(F('author_id__nomp') + ' ' + F('author_id__prenomp'),output_field=CharField())).values('id', 'text', 'created_at', 'champ_concatene')
     #comments = Comment.objects.filter(muso_id=muso_id).order_by('-created_at')
-    return render(request, 'hod_template/commentaire.html', {'comments': comments})
+    today_date = datetime.now().date()
 
+    # Ajouter une clé 'difference_in_days' à chaque commentaire contenant la différence en jours
+    for comment in comments:
+        created_at_date = comment['created_at'].date()
+        difference = today_date - created_at_date
+        comment['difference_in_days'] = difference.days
+
+    return render(request, 'hod_template/commentaire.html', {'comments': comments})
 
 #@login_required
 def user_info(request):

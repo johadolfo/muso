@@ -1,6 +1,6 @@
 {% extends 'hod_template/base_template.html' %}
 {% block page_title %} 
-Ajouter Cotisation <button type="button" class="btn btn-success" data-toggle="modal" onclick="toggleForm()" >Ajouter Multi-Cotisation</button>
+<button type="button" class="btn btn-success" data-toggle="modal" onclick="toggleForm()" >Ajouter Cotisation pr Nouveau Membre</button> <a href="{% url 'add_more_cotisation' %}" class="btn btn-primary">Ajouter Plusieur Cotisations</a>
 {% endblock page_title %}
 {% block main_content %}
     <!-- Main content -->
@@ -16,7 +16,7 @@ Ajouter Cotisation <button type="button" class="btn btn-success" data-toggle="mo
                     <!-- general form elements -->
                 <div class="card card-primary">
                       <div class="card-header">
-                        <h3 class="card-title">Ajouter Cotisation </button></h3>
+                        <h3 class="card-title">Ajouter Cotisation Pour Un Membre </button></h3>
                       </div>
                       <!-- /.card-header -->
                       <!-- form start -->
@@ -36,10 +36,10 @@ Ajouter Cotisation <button type="button" class="btn btn-success" data-toggle="mo
                           <div class="form-group">
                             <label>Type Cotisation</label>
                             <select class="form-control"   name="type_cotisation">
-                                    <option value="Fond de Credit">Fond de Credit</option>
-                                    <option value="Fond de Fonctionnement">Fond de Fonctionnement</option>
-                                    <option value="Fond d'Urgence">Fond d'Urgence</option>
-                            </select>
+                              {% for type_coti in type_cotisation %}
+                              <option value="{{ type_coti.nom_cotisation }}">{{ type_coti.nom_cotisation }} </option>
+                              {% endfor %}
+                          </select>
                           </div>
                           <div class="form-group">
                             <label>Montant</label>

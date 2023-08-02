@@ -2,6 +2,7 @@
 <style>
   .color_bar {
       background-color: {{ user.muso.couleur_preferee }};
+  }
       /* Autres propriétés CSS */
   .color_text {
       color: {{ user.muso.couleur_text_menu }};
@@ -13,7 +14,7 @@
     <div style="display: flex; align-items: center;">
       <img src="{{ user.muso.logo_muso }}" class="img-circle elevation-2" alt="User Image" style="width: 100px; height: 100px;">
      
-      <a href="{% url 'edit_muso' %}" class="d-block"> <h2 style="margin-left: 10px; color:aqua;">{{ user.muso.sigle }}</h2></a>
+      <a href="{% url 'edit_miso' %}" class="d-block"> <h2 style="margin-left: 10px; color:rgb(255, 179, 0);">{{ user.muso.sigle }}</h2></a>
     </div>
 
     <!-- Sidebar -->
@@ -96,16 +97,6 @@
           </li>
        
 
-          <li class="nav-item">
-            {% url 'manage_detailalimentaire' as manage_detailalimentaire %}
-            <a href="{% url 'manage_detailalimentaire' %}" class="nav-link {% if request.path == manage_detailalimentaire %} active {% endif %}">
-              <i class="nav-icon fas fa-th color_text"></i>
-              <p class="color_text">
-                Liste Details Alimentaire
-              
-              </p>
-            </a>
-          </li>
 
           <li class="nav-item">
             {% url 'manage_remboursement' as manage_remboursement %}
@@ -132,16 +123,7 @@
             </a>
           </li>
 
-          <li class="nav-item">
-            {% url 'statistique_remboursement' as statistique_remboursement %}
-            <a href="{% url 'statistique_remboursement' %}" class="nav-link {% if request.path == statistique_remboursement %} active {% endif %}{% if request.path == edit_subject %} active {% endif %}">
-              <i class="nav-icon fas fa-th color_text"></i>
-              <p class="color_text">
-                Rapport Remboursements
-                
-              </p>
-            </a>
-          </li>
+        
 
           <li class="nav-item">
             {% url 'interets_ajoutes' as interets_ajoutes %}
@@ -195,15 +177,7 @@
             </a>
           </li>
 
-          <li class="nav-item">
-            {% url 'statistique_credit' as statistique_credit %}
-            <a href="{% url 'statistique_credit' %}" class="nav-link {% if request.path == statistique_credit %} active {% endif %}">
-              <i class="nav-icon fas fa-th color_text"></i>
-              <p class="color_text">
-                Statistique credit
-              </p>
-            </a>
-          </li>
+         
 
         </ul>
       </nav>

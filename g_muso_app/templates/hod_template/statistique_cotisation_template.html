@@ -65,7 +65,7 @@ Statistique des Cotisations <a href="{% url 'export_statistique_cotisation_csv' 
                           <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.6 | floatformat:2 }}</button>
                       </td> 
                             <td>{{ cotisation.7 | floatformat:2 }}</td>
-                            <td>{{ cotisation.8 | floatformat:2 }}</td>
+                            <td><button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.8 | floatformat:2 }}</button></td>
                           </tr>
                          {% endfor %}
                         </tbody>
@@ -74,26 +74,26 @@ Statistique des Cotisations <a href="{% url 'export_statistique_cotisation_csv' 
                     <!-- /.card-body -->
                   <!-- Pagination -->
                   <nav class="mt-4">
-                    {% if remboursement_info.has_other_pages %}
+                    {% if cotisation_info.has_other_pages %}
                     <ul class="pagination justify-content-left">
-                      {% if remboursement_info.has_previous %}
+                      {% if cotisation_info.has_previous %}
                       <a href="?page= 1 " class="btn btn-outline-primary mb-4" style="width: 69 px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">First</a>
-                      <li class="page-item"><a class="page-link" href="?page={{ remboursement_info.previous_page_number }}"><i class="fas fa-angle-double-left"></i></a></li>
+                      <li class="page-item"><a class="page-link" href="?page={{ cotisation_info.previous_page_number }}"><i class="fas fa-angle-double-left"></i></a></li>
                       {% else %}
                       <li class="page-item disabled"></li>
                       {% endif %}
                       
-                      {% for i in remboursement_info.paginator.page_range %}
-                        {% if remboursement_info.number == 1 %}
+                      {% for i in cotisation_info.paginator.page_range %}
+                        {% if cotisation_info.number == 1 %}
                         <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only"></span></span></li>
                         {% else %}
                         <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                         {% endif %}
                       {% endfor %}
 
-                      {% if remboursement_info.has_next %}
-                      <li class="page-item"><a class="page-link" href="?page={{ remboursement_info.next_page_number }}" ><i class="fas fa-angle-double-right"></i></a></li>
-                      <a href="?page={{ remboursement_info.paginator.num_pages }}" class="btn btn-outline-primary mb-4" style="width:60px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">Last</a>
+                      {% if cotisation_info.has_next %}
+                      <li class="page-item"><a class="page-link" href="?page={{ cotisation_info.next_page_number }}" ><i class="fas fa-angle-double-right"></i></a></li>
+                      <a href="?page={{ cotisation_info.paginator.num_pages }}" class="btn btn-outline-primary mb-4" style="width:60px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">Last</a>
                       {% else %}
                       <li class="page-item disabled"></li>
                       {% endif %}

@@ -7,28 +7,46 @@
       color: {{ user.muso.couleur_text_menu }};
       /* Autres propriétés CSS */
   }
+
+  .custom-hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, #ff0000, #00ff00);
+    margin: 20px 0;
+  }
+
+  .image {
+    height: 50px; /* Augmentez la hauteur selon vos besoins */
+    overflow: visible;
+  }
+
+  .image img {
+    margin-top: 10px; /* Ajustez la valeur selon vos besoins */
+  }
 </style>
 <aside class="main-sidebar color_bar elevation-4">
     <!-- Brand Logo -->
+</br>
     <a href="" class="brand-link">
-      <img src="" alt="Mutuel Solidarite" class="brand-image img-circle elevation-3"
-           style="opacity: .8">
+      <img src="{{ user.muso.logo_muso }}" alt="Mutuel Solidarite" class="brand-image img-circle elevation-3" style="opacity: .8; transform: scale(2.5); margin-right: 40px; margin-left: 20px; "> <h2>{{ user.muso.sigle }}</h2>
     </a>
-
+    <hr class="custom-hr">
+ 
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          
-          <img src="{{ membre_obj.profile_pic }}" class="img-circle elevation-2" alt="User Image">
-          
+          <img src="{{ membre_obj.profile_pic }}" class="img-circle elevation-2" alt="User Image" style="opacity: .8; transform: scale(1.5); margin-right: 10px; margin-left: 5px;"> 
+       
         </div>
-      </br>
+        <p>
         <div class="info">
           <a href="{% url 'membre_profile' %}" class="d-block">{{ user.username }}</a>
         </div>
+      </p>
       </div>
+      
 
       <!-- Sidebar Menu -->
       <nav class="mt-2">

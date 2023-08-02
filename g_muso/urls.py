@@ -31,6 +31,8 @@ urlpatterns = [
 
     #adm home
     path('manage_user', ADMViews.manage_user, name="manage_user"),
+    path('add_muso1', ADMViews.add_muso1, name="add_muso1"),
+    path('add_muso1_save', ADMViews.add_muso1_save, name="add_muso1_save"),
     path('add_muso', ADMViews.add_muso, name="add_muso"),
     path('add_muso_save', ADMViews.add_muso_save, name="add_muso_save"),
     path('manage_muso', ADMViews.manage_muso, name="manage_muso"),
@@ -53,6 +55,8 @@ urlpatterns = [
     path('add_membre_save', HodViews.add_membre_save, name="add_membre_save"),
     path('add_tbcotisation', HodViews.add_tbcotisation, name="add_tbcotisation"),
     path('add_cotisation_save', HodViews.add_cotisation_save, name="add_cotisation_save"),
+    path('add_more_cotisation', HodViews.add_more_cotisation, name="add_more_cotisation"),
+    path('add_more_cotisation_save', HodViews.add_more_cotisation_save, name="add_more_cotisation_save"),
     path('add_cotisationnouveauMEMBRE_save', HodViews.add_cotisationnouveauMEMBRE_save, name="add_cotisationnouveauMEMBRE_save"),
     path('add_cotisationRemplacerMEMBRE_save', HodViews.add_cotisationRemplacerMEMBRE_save, name="add_cotisationRemplacerMEMBRE_save"),
     path('add_credit', HodViews.add_credit, name="add_credit"),
@@ -89,8 +93,8 @@ urlpatterns = [
     #path('edit_tbmuso', HodViews.edit_tbmuso, name="edit_tbmuso"),
     #path('edit_tbmuso_save<int:tbmuso_id>/', HodViews.edit_tbmuso_save, name='edit_tbmuso_save'),
 
-    path('edit_muso', HodViews.edit_muso, name="edit_muso"),
-    path('edit_muso_save', HodViews.edit_muso_save, name="edit_muso_save"),
+    path('edit_miso', HodViews.edit_miso, name="edit_miso"),
+    path('edit_miso_save', HodViews.edit_miso_save, name="edit_miso_save"),
 
     path('check_email_exist', HodViews.check_email_exist, name="check_email_exist"),
     path('check_codep_exist', HodViews.check_codep_exist, name="check_codep_exist"),
@@ -155,5 +159,8 @@ urlpatterns = [
     path('user_info', MembreViews.user_info, name="user_info"),
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

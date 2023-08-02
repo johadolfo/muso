@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 import traceback
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
-from g_muso_app.models import CustomUser, Membre, tbcotisation, tbcredit,tbremboursement,FeedBackMembre,LeaveReportMembre,CustomUser, tbdepense, tbmuso, CustomUserPermission
+from g_muso_app.models import CustomUser, Membre, tbcotisation, tbcredit,tbremboursement,FeedBackMembre,LeaveReportMembre,CustomUser, tbdepense, tbmuso, CustomUserPermission, tbtypecotisation
 from .forms import AddMembreForm,EditMembreForm, EditMusoForm, AddMusoForm
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -53,6 +53,58 @@ def adm_home(request):
 def add_personne(request):
     pass
 
+def add_muso1(request):
+    muso = tbmuso.objects.all()
+    return render(request, "adm_template/add_muso1_template.html",{"muso":muso})
+
+def add_muso1_save(request):
+    if request.method !="POST":
+        return HttpResponse("Method Not Allowed")
+    else:
+        code_muso = request.POST.get("numero_credit")
+        sigle = request.POST.get("sigle")
+        nom_muso = request.POST.get("nom_muso")
+        adresse_muso = request.POST.get("adresse_muso")
+        telephone_muso = request.POST.get("telephone_muso")
+        email_muso = request.POST.get("email_muso")
+        site_muso = request.POST.get("site_muso")
+        date_creation = request.POST.get("date_creation")
+        couleur_menu = request.POST.get("couleur_preferee")
+        taux_interet = request.POST.get("taux_interet")
+        couleur_text_menu = request.POST.get("couleur_text_menu")
+
+        logo_pic = request.FILES['logo_muso']
+        fs = FileSystemStorage()
+        filename = fs.save(logo_pic.name, logo_pic)
+        logo_pic_url = fs.url(filename)
+
+        try:
+            muso=tbmuso(codemuso=code_muso, sigle=sigle, nom_muso=nom_muso, adresse_muso=adresse_muso, telephone_muso=telephone_muso, email_muso=email_muso, site_muso=site_muso, logo_muso=logo_pic_url, date_creation=date_creation, couleur_preferee=couleur_menu, taux_interet=taux_interet, couleur_text_menu=couleur_text_menu)
+            muso.save()
+           
+            muso_id = tbmuso.objects.aggregate(max_valeur=Max('id'))['max_valeur']
+
+            valeur1 = request.POST.get("cotisation_1")
+            valeurr1 = request.POST.get("reference1")
+            valeur2 = request.POST.get("cotisation_2")
+            valeurr2 = request.POST.get("reference2")
+            valeur3 = request.POST.get("cotisation_3")
+            valeurr3 = request.POST.get("reference3")
+            typecotisation = tbtypecotisation(nom_cotisation=valeur1, cotisation_muso_id=muso_id, reference=valeurr1)
+            typecotisation1 = tbtypecotisation(nom_cotisation=valeur2, cotisation_muso_id=muso_id, reference=valeurr2)
+            typecotisation2 = tbtypecotisation(nom_cotisation=valeur3, cotisation_muso_id=muso_id, reference=valeurr3)
+            typecotisation.save()
+            typecotisation1.save()
+            typecotisation2.save()
+        
+            messages.success(request,"Successfully Added MUSO")
+            return HttpResponseRedirect(reverse("add_muso1")) 
+        except Exception as e:
+            messages.error(request,traceback.format_exc())
+            return HttpResponseRedirect(reverse("add_muso1"))
+
+
+
 def add_muso(request):
     form = AddMusoForm()
     return render(request, "adm_template/add_muso_template.html",{"form":form})
@@ -72,6 +124,9 @@ def add_muso_save(request):
             email_muso = form.cleaned_data["email_muso"]
             site_muso = form.cleaned_data["site_muso"]
             date_creation = form.cleaned_data["date_creation"]
+            couleur_menu = form.cleaned_data["couleur_preferee"]
+            taux_interet = form.cleaned_data["taux_interet"]
+            couleur_text_menu = form.cleaned_data["couleur_text_menu"]
 
             logo_pic = request.FILES['logo_muso']
             fs = FileSystemStorage()
@@ -79,9 +134,10 @@ def add_muso_save(request):
             logo_pic_url = fs.url(filename)
 
             try:
-                muso=tbmuso(codemuso=code_muso, sigle=sigle, nom_muso=nom_muso, adresse_muso=adresse_muso, telephone_muso=telephone_muso, email_muso=email_muso, site_muso=site_muso, logo_muso=logo_pic_url, date_creation=date_creation)
+                muso=tbmuso(codemuso=code_muso, sigle=sigle, nom_muso=nom_muso, adresse_muso=adresse_muso, telephone_muso=telephone_muso, email_muso=email_muso, site_muso=site_muso, logo_muso=logo_pic_url, date_creation=date_creation, couleur_preferee=couleur_menu, taux_interet=taux_interet, couleur_text_menu=couleur_text_menu)
                 #muso=tbmuso(codemuso=code_muso, sigle=sigle, nom_muso=nom, adresse_muso=adresse, telephone_muso=telephone, email_muso=email, site_muso=site_web, logo_muso=logo_pic_url, date_creation=date_creation)
                 muso.save()
+
                 messages.success(request,"Successfully Added Muso")
                 return HttpResponseRedirect(reverse("add_muso")) 
             except Exception as e:
@@ -381,10 +437,6 @@ def show_aceess(request):
 
 def save_access_to_user(request):
     if request.method == 'POST':
-        #selected_permissions = request.POST.getlist('permissions')
-        #user = request.user
-        #user.user_permissions.set(selected_permissions)
-        #return HttpResponseRedirect(reverse("show_aceess"))
         selected_user_id = request.POST.get('user')
         selected_permissions = request.POST.getlist('permissions')
         
@@ -399,74 +451,7 @@ def save_access_to_user(request):
         except Exception as e:
             messages.error(request, traceback.format_exc())
             return HttpResponseRedirect(reverse("show_aceess"))
-    '''current_user = request.user
-    #muso_id = current_user.muso
-    code_membres = request.POST.get("membre")
-    code_membre = Membre.objects.get(id=code_membres)
-    
-    if request.method == 'POST':
-        permiss_selectionnes = request.POST.getlist('permiss')
-        
-        try:
-            for permiss_id in permiss_selectionnes:
-                permission = Permission.objects.get(pk=permiss_id)
-                permission_ok = CustomUserPermission(customuser=code_membre, permission=permission)
-                permission_ok.save()
-        
-            messages.success(request, "Successfully Modify Access")
-            return HttpResponseRedirect(reverse("show_aceess")) 
-        except Exception as e:
-            messages.error(request, traceback.format_exc())
-            return HttpResponseRedirect(reverse("show_aceess"))'''
-        
-'''def save_access_to_user(request):
-    current_user = request.user
-    muso_id = current_user.muso
-    code_membres = request.POST.get("membre")
-    code_membre=Membre.objects.get(id=code_membres)
-    
-    if request.method == 'POST':
-        permiss_selectionnes = request.POST.getlist('permiss')
-        
-        try:
-            for permiss_id in permiss_selectionnes:
-                permission = Permission.objects.get(pk=permiss_id)
-                permission_ok = CustomUserPermission(customuser=code_membre, permission=permission.id)
-                permission_ok.save()
-        
-            messages.success(request,"Successfully Modify Access")
-            return HttpResponseRedirect(reverse("show_aceess")) 
-        except Exception as e:
-            messages.error(request,traceback.format_exc())
-            return HttpResponseRedirect(reverse("show_aceess"))
-    
-        for permiss_id in permiss_selectionnes:
-            produit = Permission.objects.get(pk=permiss_id)
-            permission_ok = CustomUserPermission(customuser_id=code_membre, permission_id=produit.id)
-            permission_ok.save()
-        
-        messages.success(request,"Successfully Modify Access")
-        return HttpResponseRedirect(reverse("show_aceess"))
-        #return render(request, 'confirmation.html')
-    else:
-        produits = Permission.objects.all()
-        membre_info = Membre.objects.filter(admin__muso=current_user.muso)
-        membres = CustomUser.objects.filter(user_type=2,muso=current_user.muso)
-        initial_data = Permission.objects.all()
-        messages.error(request,traceback.format_exc())
-        return HttpResponseRedirect(reverse("show_aceess"))
-        #return render(request, 'adm_template/access_user_template.html', {'initial_data': initial_data, 'membre_info':membre_info, 'membres':membres })'''
-
-'''def load_more_data(request):
-    offset = int(request.GET.get('offset', 0))
-    limit = 10  # Number of additional items to retrieve
-    
-    additional_data = Permission.objects.all()[offset:offset+limit]  # Retrieve additional data
-    
-    data = serializers.serialize('json', additional_data)
-    return HttpResponse(data, content_type='application/json')'''
-
-#
+  
 
 def load_more_data(request):
     offset = int(request.GET.get('offset', 0))

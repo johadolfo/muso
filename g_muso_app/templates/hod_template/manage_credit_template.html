@@ -1,6 +1,6 @@
 {% extends 'hod_template/base_template.html' %}
 {% block page_title %} 
-Liste des Credits  <a href="{% url 'export_credit_csv' %}" class="btn btn-primary">Export to CSV</a> <a href="{% url 'add_credit' %}" class="btn btn-primary">Ajouter Nouveau Credit</a>
+Liste des Credits  <a href="{% url 'export_credit_csv' %}" class="btn btn-primary">Export to CSV</a> <a href="{% url 'add_credit' %}" class="btn btn-primary">Ajouter Nouveau Credit</a><a href="{% url 'statistique_credit' %}" class="btn btn-primary">Rapport Credit</a>
 {% endblock page_title %}
 {% block main_content %}
     <!-- Main content -->

@@ -11,7 +11,7 @@ Home
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3 style="text-align: center;">{{ membre_count }}</h3>
+                <h4 style="text-align: center;">{{ membre_count }}</h4>
 
                 <p>Total Membres</p>
               </div>
@@ -23,11 +23,11 @@ Home
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-3 col-6">
+          <div class="col-lg-2 col-6">
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>{{ montant_tot }}</h3>
+                <h4>{{ montant_tot | floatformat:2 }}</h4>
 
                 <p>Montant Total</p>
               </div>
@@ -42,7 +42,7 @@ Home
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>{{ montant_credit }}</h3>
+                <h4>{{ montant_credit | floatformat:2 }}</h4>
 
                 <p>Montant Credit</p>
               </div>
@@ -53,13 +53,13 @@ Home
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-3 col-6">
+          <div class="col-lg-2 col-6">
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>{{ montant_rembourse }}</h3>
+                <h4>{{ montant_rembourse | floatformat:2 }}</h4>
 
-                <p>Montant Rembourse</p>
+                <p>Montant Remboursé</p>
               </div>
               <div class="icon">
                 <i class="ion ion-pie-graph"></i>
@@ -73,9 +73,25 @@ Home
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>{{ interet_tot }}</h3>
+                <h4>{{ interet_tot }}</h4>
 
                 <p>Montant Interet</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+              <a href="{% url 'interets_ajoutes' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-2 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h4>{{ penalite_total }}</h4>
+
+                <p>Montant Penalité</p>
+             
               </div>
               <div class="icon">
                 <i class="ion ion-pie-graph"></i>
@@ -179,9 +195,9 @@ Home
   $(document).ready(function(){
     var pieData = {
         labels:[
-            'Fon Kredi',
-            'Fon Ijans',
-            'Fon Fonksyonman',
+            'Casisse Verte',
+            'Caisse Bleue',
+            'Caisse Rouge',
         ],
           datasets : [
             {

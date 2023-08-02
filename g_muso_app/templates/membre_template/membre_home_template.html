@@ -26,7 +26,7 @@ Home
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                 <h3>{{ montant_tot}}</h3> <!--<sup style="font-size: 20px">%</sup> -->
+                 <h3>{{ montant_tot }}</h3> <!--<sup style="font-size: 20px">%</sup> -->
 
                 <p>Mon Solde</p>
               </div>
@@ -41,7 +41,7 @@ Home
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>{{ montant_credit}}</h3>
+                <h3>{{ montant_credit | floatformat:2}}</h3>
 
                 <p>Montant Credit</p>
               </div>

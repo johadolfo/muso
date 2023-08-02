@@ -1,6 +1,6 @@
 {% extends 'hod_template/base_template.html' %}
 {% block page_title %} 
-Remboursements:  <a href="{% url 'export_remboursement_csv' %}" class="btn btn-primary">Export to CSV</a> <a href="{% url 'add_remboursement' %}" class="btn btn-primary">Ajouter Nouveau Remboursement</a>
+Remboursements:  <a href="{% url 'export_remboursement_csv' %}" class="btn btn-primary">Export to CSV</a> <a href="{% url 'add_remboursement' %}" class="btn btn-primary">Ajouter Nouveau Remboursement</a><a href="{% url 'statistique_remboursement' %}" class="btn btn-primary">Rapport Remboursement</a>
 {% endblock page_title %}
 {% block main_content %}
     <!-- Main content -->

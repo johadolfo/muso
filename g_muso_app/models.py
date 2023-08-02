@@ -6,7 +6,6 @@ import datetime
 import os
 from django.contrib.auth.models import Permission
 
-
 def filepath(request, filename):
     old_filename=filename
     timenow = datetime.datetime.now().strftime('%Y%m%d%H:%M:%S')
@@ -49,7 +48,11 @@ class tbmuso(models.Model):
     #def __str__(self):
     #return self.nom_muso
 
-   
+class tbtypecotisation(models.Model):
+    nom_cotisation = models.CharField("Libelle ",max_length=50, blank=True)
+    reference = models.CharField("Reference Caisse ",max_length=50, blank=True)
+    cotisation_muso = models.ForeignKey(tbmuso, on_delete=models.CASCADE)
+ 
 class CustomUser(AbstractUser):
     user_type_data = ((1,"HOD"), (2, "Membre"), (3, "SUPHOD"))
     user_type= models.CharField(default=1, choices=user_type_data, max_length=10)
