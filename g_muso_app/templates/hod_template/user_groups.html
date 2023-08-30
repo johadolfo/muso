@@ -1,0 +1,37 @@
+<!--<h1>User Groups</h1>
+<ul>
+  {% for group in user_groups %}
+    <li>{{ group.name }}</li>
+  {% endfor %}
+</ul>-->
+
+<h1>User Groups</h1>
+<ul>
+  {% for group in user_groups %}
+    <li>{{ group }}</li>
+  {% endfor %}
+</ul>
+<!--
+<h1> PERMISSIONS</h1>
+<div class="card-body table-responsive p-0">
+    <table class="table table-hover text-nowrap">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>NAME</th>
+          <th>CONTENT TYPE</th>
+          <th>CODENAME</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for group in user_groups %}
+        <tr>
+          <td>{{ group.id }}</td>
+          <td>{{ group.name }}</td>
+          <td>{{ group.content_type }}</td>
+          <td>{{ group.codename }}</td>
+       
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>-->

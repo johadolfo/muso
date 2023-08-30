@@ -1,0 +1,219 @@
+{% extends 'adm_template/base_template.html' %}
+{% block page_title %} 
+Ajouter Une Nouveau MUSO
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+                    <!-- general form elements -->
+                <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Ajouter Credit</h3>
+                      </div>
+                      <!-- /.card-header -->
+                      <!-- form start -->
+                      <form role="form" action="/add_muso1_save" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="card-body">
+                          <div class="form-group">
+                                <label>Numero</label>
+                                <input type="text" class="form-control" name="numero_credit" placeholder="Entrer le code du muso">
+                          </div>
+                          <div class="form-group">
+                            <label>Sigle</label>
+                            <input type="text" class="form-control" name="sigle" placeholder="Entrer le sigle du muso">
+                          </div>
+                          <div class="form-group">
+                            <label>Nom</label>
+                            <input type="text" class="form-control" name="nom_muso" placeholder="Entrer le nom du muso">
+                          </div>
+                          <div class="form-group">
+                            <label>adresse</label>
+                            <input type="text" class="form-control" name="adresse_muso" placeholder="Entrer l'adresse du muso">
+                          </div>
+                          <div class="form-group">
+                            <label>Telephone</label>
+                            <input type="text" class="form-control" name="telephone_muso" placeholder="Entrer le numero de telephone">
+                          </div>
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="text" class="form-control" name="email_muso" placeholder="Entrer l'email">
+                          </div>
+                          <div class="form-group">
+                            <label>Site Web</label>
+                            <input type="text" class="form-control" name="site_muso" placeholder="Entrer le site web ">
+                          </div>
+                          <div class="form-group">
+                            <label>Logo</label>
+                            <input type="file" class="form-control"  name="logo_muso" >
+                          </div>
+                          <div class="form-group">
+                            <label>Date creation</label>
+                            <input type="date" class="form-control" name="date_creation" placeholder="Entrer l'interet ">
+                          </div>
+                          
+                          <div class="form-group">
+                            <label>Couleur Menu de gauche</label>
+                            <select class="form-control" name="couleur_preferee">
+                              <option value="">Sélectionnez une couleur</option>
+                              <option value="#ff0000" style="background-color: #ff0000;">Rouge</option>
+                              <option value="#00ff00" style="background-color: #00ff00;">Vert</option>
+                              <option value="#0000ff" style="background-color: #0000ff;">Bleu</option>
+                              <option value="#ffff00" style="background-color: #ffff00;">Jaune</option>
+                              <option value="#ff00ff" style="background-color: #ff00ff;">Magenta</option>
+                              <option value="#00ffff" style="background-color: #00ffff;">Cyan</option>
+                              <option value="#800000" style="background-color: #800000;">Marron</option>
+                              <option value="#008000" style="background-color: #008000;">Vert foncé</option>
+                              <option value="#000080" style="background-color: #000080;">Bleu foncé</option>
+                              <option value="#808000" style="background-color: #808000;">Olive</option>
+                              <option value="#800080" style="background-color: #800080;">Violet</option>
+                              <option value="#008080" style="background-color: #008080;">Bleu-vert</option>
+                              <option value="#ff8000" style="background-color: #ff8000;">Orange</option>
+                              <option value="#8000ff" style="background-color: #8000ff;">Indigo</option>
+                              <option value="#00ff80" style="background-color: #00ff80;">Turquoise</option>
+                              <option value="#ff0080" style="background-color: #ff0080;">Rose</option>
+                              <option value="#80ff00" style="background-color: #80ff00;">Citron vert</option>
+                              <option value="#0080ff" style="background-color: #0080ff;">Bleu clair</option>
+                              <option value="#ff8080" style="background-color: #ff8080;">Saumon</option>
+                              <option value="#ffffff" style="background-color: #ffffff;">Blanc</option>
+                              <option value="#000000" style="background-color: #000000; color: #ffffff;">Noir</option>
+                              <option value="#ff9999" style="background-color: #ff9999;">Saumon clair</option>
+                              <option value="#99ff99" style="background-color: #99ff99;">Vert clair</option>
+                              <option value="#9999ff" style="background-color: #9999ff;">Bleu clair</option>
+                              <option value="#ffff99" style="background-color: #ffff99;">Jaune clair</option>
+                              <option value="#ff99ff" style="background-color: #ff99ff;">Rose clair</option>
+                              <option value="#99ffff" style="background-color: #99ffff;">Turquoise clair</option>
+                              <option value="#ffcc99" style="background-color: #ffcc99;">Pêche</option>
+                              <option value="#ccff99" style="background-color: #ccff99;">Vert lime</option>
+                            </select>
+                          </div>
+
+                          <div class="form-group">
+                            <label>Taux Interet Credit</label>
+                            <input type="text" class="form-control" name="taux_interet" value="{{ muso.taux_interet }}">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Couleur Text Menu</label>
+
+                          <select class="form-control" name="couleur_text_menu">
+                            <option value="">Sélectionnez une couleur</option>
+                            <option value="#ff0000" style="background-color: #ff0000;">Rouge</option>
+                            <option value="#00ff00" style="background-color: #00ff00;">Vert</option>
+                            <option value="#0000ff" style="background-color: #0000ff;">Bleu</option>
+                            <option value="#ffff00" style="background-color: #ffff00;">Jaune</option>
+                            <option value="#ff00ff" style="background-color: #ff00ff;">Magenta</option>
+                            <option value="#00ffff" style="background-color: #00ffff;">Cyan</option>
+                            <option value="#800000" style="background-color: #800000;">Marron</option>
+                            <option value="#008000" style="background-color: #008000;">Vert foncé</option>
+                            <option value="#000080" style="background-color: #000080;">Bleu foncé</option>
+                            <option value="#808000" style="background-color: #808000;">Olive</option>
+                            <option value="#800080" style="background-color: #800080;">Violet</option>
+                            <option value="#008080" style="background-color: #008080;">Bleu-vert</option>
+                            <option value="#ff8000" style="background-color: #ff8000;">Orange</option>
+                            <option value="#8000ff" style="background-color: #8000ff;">Indigo</option>
+                            <option value="#00ff80" style="background-color: #00ff80;">Turquoise</option>
+                            <option value="#ff0080" style="background-color: #ff0080;">Rose</option>
+                            <option value="#80ff00" style="background-color: #80ff00;">Citron vert</option>
+                            <option value="#0080ff" style="background-color: #0080ff;">Bleu clair</option>
+                            <option value="#ff8080" style="background-color: #ff8080;">Saumon</option>
+                            <option value="#ffffff" style="background-color: #ffffff;">Blanc</option>
+                            <option value="#000000" style="background-color: #000000; color: #ffffff;">Noir</option>
+                            <option value="#ff9999" style="background-color: #ff9999;">Saumon clair</option>
+                            <option value="#99ff99" style="background-color: #99ff99;">Vert clair</option>
+                            <option value="#9999ff" style="background-color: #9999ff;">Bleu clair</option>
+                            <option value="#ffff99" style="background-color: #ffff99;">Jaune clair</option>
+                            <option value="#ff99ff" style="background-color: #ff99ff;">Rose clair</option>
+                            <option value="#99ffff" style="background-color: #99ffff;">Turquoise clair</option>
+                            <option value="#ffcc99" style="background-color: #ffcc99;">Pêche</option>
+                            <option value="#ccff99" style="background-color: #ccff99;">Vert lime</option>
+                          </select>
+                        </div>
+
+                        <div class="form-group">
+                        <label>Information sur les cotisations</label>
+                        </div>
+                        <div class="form-group">
+                          Libelle Cotisation 1:
+                          <input type="text"  name="cotisation_1" >
+                          Reference Cotisation 1:
+                          <input type="text"  name="reference1" value="cr" > caisse rouge
+                        </div>
+
+                        <div class="form-group">
+                          Libelle Cotisation 2:
+                          <input type="text"  name="cotisation_2" >
+                          Reference Cotisation 2:
+                          <input type="text"  name="reference2" value="cv" > caisse verte
+                        </div>
+
+                        <div class="form-group">
+                          Libelle Cotisation 3:
+                          <input type="text"  name="cotisation_3" >
+                          Reference Cotisation 3:
+                          <input type="text"  name="reference3" value="cb" > caisse bleue
+                        </div>
+
+                          <div class="form-group">
+                            {% if messages %}
+                            <div class="col-12">
+                              {% for message in messages %}
+                              {% if message.tags == 'error' %}
+                              <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% if message.tags == 'success' %}
+                              <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% endfor %}
+                            </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <!-- /.card-body -->
+        
+                        <div class="card-footer">
+                          <button type="submit" class="btn btn-primary btn-block">Add Muso</button>
+                        </div>
+                      </form>
+                </div>
+                    <!-- /.card -->
+              </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+      {% endblock main_content %}
+      {% block custom_js %}
+      <script>
+        function afficherChamps() {
+          var quantite = parseInt(document.getElementById('quantite').value);
+          var champsSupplementairesDiv = document.getElementById('champs_supplementaires');
+        
+          // Réinitialiser les champs supplémentaires
+          champsSupplementairesDiv.innerHTML = '';
+        
+          // Afficher les champs supplémentaires en fonction de la quantité
+          for (var i = 0; i < quantite; i++) {
+            var inputName = 'cotisation_' + (i + 1);
+            var inputId = 'cotisation_' + (i + 1);
+           
+        
+            var inputLabel = document.createElement('label');
+            inputLabel.setAttribute('for', inputId);
+            inputLabel.innerText = 'Entrer le nom du cotisation ' + (i + 1) + ' :';
+        
+            var inputField = document.createElement('input');
+            inputField.setAttribute('type', 'text');
+            inputField.setAttribute('id', inputId);
+            inputField.setAttribute('name', inputName);
+
+            champsSupplementairesDiv.appendChild(inputLabel);
+            champsSupplementairesDiv.appendChild(inputField);
+
+          }
+        }
+        </script>
+         {% endblock custom_js %}

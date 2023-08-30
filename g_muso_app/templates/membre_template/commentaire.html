@@ -1,0 +1,85 @@
+{% extends 'membre_template/base_template.html' %}
+{% block page_title %} 
+Espace Pour Tous
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+      <style>
+        .hidden-comment {
+            display: none;
+        }
+    </style>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-12">
+                  <!-- general form elements -->
+              <div class="card card-primary">
+                    <div class="card-header">
+                      <h3 class="card-title">Espace Pour Tous</h3>
+                    </div>
+                    
+                    <div class="ibox float-e-margins">
+                      
+                      <div class="ibox-content">
+
+                          <div>
+                              <div class="feed-activity-list">
+                                {% for comment in comments %}
+                                  <div class="feed-element  {% if forloop.counter > 5 %}hidden-comment{% endif %}" style="padding: 10px;">
+                                      <a href="#" class="pull-left">
+                                          <img alt="User Image" class="img-circle" src="{{ comment.author_id__profile_pic }}" style="width: 4%;">
+                                      </a>
+                                      <div class="media-body ">
+                                          <small class="pull-right">depuis {{ comment.difference_in_days }} jours</small><br>
+                                          <strong>{{ comment.author_id__nomp }}  {{ comment.author_id__prenomp }}</strong> <br>
+                                          <small class="text-muted">{{ comment.created_at  }}</small>
+                                          <div class="well">
+                                            {{ comment.text }}
+                                        </div>
+                                        <div class="pull-right">
+                                            <a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>
+                                        </div>
+
+                                      </div>
+                                  </div>
+                                {% endfor %}
+                              </div>
+                              <button id="show-more-btn">Show More</button>
+                          </div>
+                      </div>
+                 </div>
+                    <hr>
+                    Envoyer un Message
+                        <form method="POST" action="{% url 'add_mcomments_save' %}">
+                          {% csrf_token %}
+                          <textarea name="content" rows="4" cols="50" class="comment-textarea"></textarea>
+                        <br/>
+                          <button type="submit">Envoyer</button>
+                        </form>
+                    <hr>
+                  </div>
+                </div>
+    
+                </div>
+            </div>
+        </div>
+        </section>
+          <!-- /.content -->
+    {% endblock main_content %}
+    
+    {% block custom_js %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          var showMoreButton = document.getElementById('show-more-btn');
+          var hiddenComments = document.querySelectorAll('.hidden-comment');
+  
+          showMoreButton.addEventListener('click', function() {
+              hiddenComments.forEach(function(comment) {
+                  comment.classList.remove('hidden-comment');
+              });
+              showMoreButton.style.display = 'none'; // Masquer le bouton "Show More" après affichage de tous les commentaires.
+          });
+      });
+    </script>
+    {% endblock custom_js%}

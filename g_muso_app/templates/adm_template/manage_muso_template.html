@@ -1,0 +1,110 @@
+{% extends 'adm_template/base_template.html' %}
+{% block page_title %} 
+Liste des Muso <a href="{% url 'export_csv' %}" class="btn btn-primary">Export to CSV</a>
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Muso Details 
+                      
+
+                      </h3>
+      
+                      <div class="card-tools">
+                      <form >
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                          <input type="text" name="q" class="form-control float-right" placeholder="Search">
+      
+                          <div class="input-group-append">
+                            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                            <a href="{% url 'manage_muso' %}" class="btn btn-dark" style="margin-left: 2px";><i class="fas fa-sync-alt"></i></a>
+                          </div>
+                        </div>
+                      </form>
+                      </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0">
+                      <table class="table table-hover text-nowrap">
+                        <thead>
+                          <tr>
+                            <th>NO</th>
+                            <th>Sigle</th>
+                            <th>Nom</th>   
+                            <th>Adresse</th>
+                            <th>Telephone</th>
+                            <th>Email</th>
+                            <th>Site</th>
+                            <th>Date Creation</th>
+                            <th>Taux d'interet </th>
+                            <th>Couleur Menu de gauche</th>
+                            <th>Couleur Text de menu</th>
+                            <th>logo</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {% for muso in musos %}
+                          <tr>
+                            <td>{{ muso.codemuso }}</td>
+                            <td>{{ muso.sigle }} </td>
+                            <td>{{ muso.nom_muso}}</td>
+                            <td>{{ muso.adresse_muso }}</td>
+                            <td>{{ muso.telephone_muso }}</td>
+                            <td>{{ muso.email_muso }}</td>
+                            <td>{{ muso.site_muso }}</td>
+                            <td>{{ muso.date_creation }}</td>
+                            <td>{{ muso.taux_interet }}</td>
+                            <td>{{ muso.couleur_preferee }}</td>
+                            <td>{{ muso.couleur_text_menu }}</td>
+                            <td><img src="{{ muso.logo_muso }}" style="width:50px"/></td>
+                            <td> <a href="{% url 'edit_muso'  muso_id=muso.id %}" class="btn btn-success">Edit</a></td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                      
+                    </div>
+                    <!-- Pagination -->
+                    <nav class="mt-4">
+                      {% if musos.has_other_pages %}
+                      <ul class="pagination justify-content-left">
+                        {% if musos.has_previous %}
+                        <a href="?page= 1 " class="btn btn-outline-primary mb-4" style="width: 69 px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">First</a>
+                        <li class="page-item"><a class="page-link" href="?page={{ musos.previous_page_number }}"><i class="fas fa-angle-double-left"></i></a></li>
+                        {% else %}
+                        <li class="page-item disabled"></li>
+                        {% endif %}
+                        
+                        {% for i in musos.paginator.page_range %}
+                          {% if musos.number == 1 %}
+                          <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only"></span></span></li>
+                          {% else %}
+                          <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                          {% endif %}
+                        {% endfor %}
+
+                        {% if musos.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ musos.next_page_number }}" ><i class="fas fa-angle-double-right"></i></a></li>
+                        <a href="?page={{ musos.paginator.num_pages }}" class="btn btn-outline-primary mb-4" style="width:60px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">Last</a>
+                        {% else %}
+                        <li class="page-item disabled"></li>
+                        {% endif %}
+                      </ul>
+                    {% endif %}
+                    </nav>
+                    <!-- /.card-body -->
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+            </div>
+        </div>
+    </section>
+      <!-- /.content -->
+{% endblock main_content %}

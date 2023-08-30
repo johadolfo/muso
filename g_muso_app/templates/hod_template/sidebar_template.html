@@ -1,0 +1,191 @@
+{% load static %}
+<style>
+  .color_bar {
+      background-color: {{ user.muso.couleur_preferee }};
+  }
+      /* Autres propriétés CSS */
+  .color_text {
+      color: {{ user.muso.couleur_text_menu }};
+      /* Autres propriétés CSS */
+  }
+</style>
+<aside class="main-sidebar color_bar elevation-4">
+    <!-- Brand Logo -->
+    <div style="display: flex; align-items: center;">
+      <img src="{{ user.muso.logo_muso }}" class="img-circle elevation-2" alt="User Image" style="width: 100px; height: 100px;">
+     
+      <a href="{% url 'edit_miso' %}" class="d-block"> <h2 style="margin-left: 10px; color:rgb(255, 179, 0);">{{ user.muso.sigle }}</h2></a>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar ">
+      
+      <!-- Sidebar Menu -->
+      <nav class="mt-2 ">
+        <ul class="nav nav-pills nav-sidebar flex-column " data-widget="treeview" role="menu" data-accordion="false">
+          <!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+            <li class="nav-item">
+                {% url 'admin_home' as admin_home %}
+                <a href="{{ admin_home }}" class="nav-link {% if request.path == admin_home %} active {% endif %}">
+                  <i class="nav-icon fas fa-th color_text"></i>
+                  <p class="color_text">
+                    Home
+                   
+                  </p>
+                </a>
+          </li>
+
+
+          <li class="nav-item ">
+            {% url 'manage_membre' as manage_membre %}
+            <a href="{% url 'manage_membre' %}" class="nav-link {% if request.path == manage_membre %} active {% endif %}{% if request.path == manage_membre %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+                Liste des Membres
+               
+              </p>
+            </a>
+          </li>
+
+         
+         
+          <li class="nav-item">
+            {% url 'view_tbcotisation' as view_tbcotisation %}
+            <a href="{% url 'view_tbcotisation' %}" class="nav-link {% if request.path == view_tbcotisation %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+                Liste des Cotisations
+              
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            {% url 'liste_credit' as liste_credit %}
+            
+            <a href="{% url 'liste_credit' %}" class="nav-link {% if request.path == liste_credit %} active {% endif %}{% if request.path == edit_credit %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+               Liste des Credits
+              </p>
+            </a>
+          </li>
+
+          
+          <li class="nav-item">
+            {% url 'CalculateurPretView' as CalculateurPretView %}
+           
+            <a href="{% url 'CalculateurPretView' %}" class="nav-link {% if request.path == CalculateurPretView %} active {% endif %}{% if request.path == CalculateurPretView %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+               Calculatrice de Pret
+              </p>
+            </a>
+          </li>
+
+         
+          <li class="nav-item">
+            {% url 'manage_creditalimentaire' as manage_creditalimentaire %}
+            {% url 'edit_credit' credit_id=numero as edit_credit %}
+            <a href="{% url 'manage_creditalimentaire' %}" class="nav-link {% if request.path == manage_creditalimentaire %} active {% endif %}{% if request.path == edit_credit %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+               Liste Credits Alimentaires
+              </p>
+            </a>
+          </li>
+       
+
+
+          <li class="nav-item">
+            {% url 'manage_remboursement' as manage_remboursement %}
+            {% url 'edit_remboursement' remboursement_id=id as edit_remboursement %}
+            <a href="{% url 'manage_remboursement' %}" class="nav-link {% if request.path == manage_remboursement %} active {% endif %}{% if request.path == edit_subject %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+                Liste des Remboursements
+                
+              </p>
+            </a>
+          </li>
+
+
+          <li class="nav-item">
+            {% url 'manage_depense' as manage_depense %}
+            {% url 'edit_depense' depense_id=id as edit_depense %}
+            <a href="{% url 'manage_depense' %}" class="nav-link {% if request.path == manage_depense %} active {% endif %}{% if request.path == edit_depense %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+                Liste des Depenses
+                
+              </p>
+            </a>
+          </li>
+
+        
+
+          <li class="nav-item">
+            {% url 'interets_ajoutes' as interets_ajoutes %}
+            <a href="{{ interets_ajoutes }}" class="nav-link {% if request.path == interets_ajoutes %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+               Les Interets Ajoutes
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            {% url 'membre_feedback_message' as membre_feedback_message %}
+            <a href="{% url 'membre_feedback_message' %}" class="nav-link {% if request.path == membre_feedback_message %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+                Message Membre
+                
+              </p>
+            </a>
+          </li>
+
+          
+          <li class="nav-item">
+            {% url 'membre_leave_view' as membre_leave_view %}
+            <a href="{% url 'membre_leave_view' %}" class="nav-link {% if request.path == membre_leave_view %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+                Membre Abandonne
+              </p>
+            </a>
+          </li>
+
+          <!---<li class="nav-item">
+            {% url 'comiteSMS_feedback' as comiteSMS_feedback %}
+            <a href="{% url 'comiteSMS_feedback' %}" class="nav-link {% if request.path == comiteSMS_feedback %} active {% endif %}">
+              <i class="nav-icon fas fa-th"></i>
+              <p>
+                Envoyer Un Message
+              </p>
+            </a>
+          </li>-->
+
+          <li class="nav-item">
+            {% url 'profile_view' as profile_view %}
+            <a href="{% url 'profile_view' %}" class="nav-link {% if request.path == profile_view %} active {% endif %}">
+              <i class="nav-icon fas fa-th color_text"></i>
+              <p class="color_text">
+                Message Pour Tous!
+              </p>
+            </a>
+          </li>
+
+         
+
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+  {% block custom_js %}
+
+
+  {% endblock custom_js %}

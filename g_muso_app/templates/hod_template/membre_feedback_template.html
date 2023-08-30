@@ -1,0 +1,137 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+Membre Feedback
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+                    <!-- general form elements -->
+                <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Membre Feedback</h3>
+                      </div>
+                      <!-- /.card-header -->
+                      <!-- form start -->
+                      <div class="table">
+                        <table class="table">
+                            <tr>
+                                <th>ID</th>
+                                <th>Code Membre</th>
+                                <th>Nom Membre</th>
+                                <th>Message</th>
+                                <th>Sended On</th>
+                                <th>Reply</th>
+                            </tr>
+                            {% for feedback in feedbacks %}
+                            <tr>
+                                <td> {{ feedback.id }}</td>
+                                <td> {{ feedback.code_membre_id }}</td>
+                                <td> {{ feedback.code_membre.prenomp }} {{ feedback.code_membre.nomp }}</td>
+                                <td> {{ feedback.feedback }}</td>
+                                <td> {{ feedback.created_at }}</td>
+                                <td>
+                                    {% if feedback.feedback_reply == "" %}
+                            
+                                    <button id="repondreBtn" class = "btn btn-info btn-lg">Répondre</button>
+                                    {% else %}
+                                    {{ feedback.feedback_reply }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                      </div>
+                     
+                </div>
+                    <!-- /.card -->
+                    <div class="form-group">
+                      {% if messages %}
+                      <div class="col-12">
+                        {% for message in messages %}
+                        {% if message.tags == 'error' %}
+                        <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                        {% endif %}
+                        {% if message.tags == 'success' %}
+                        <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                      {% endif %}
+                    </div>
+                    <form method="post" action="{% url 'membre_feedback_message_replied' %}">
+                      
+                    <div id="maPopUp" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
+                      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px;">
+                        <!-- Contenu de la pop-up -->
+                        <h2>Répondre au message</h2>
+                        {% for feedback in feedbacks %}
+                        <input type="hidden" name="id_message" value="{{ feedback.id }}">
+                        {% endfor %}
+                        <textarea rows="4" cols="50" name="reponse_message"></textarea>
+                        <br>
+                        <button type="submit" >Repondre</button>
+                        <button onclick="cacherPopUp()">Annuler</button>
+                      </div>
+                    </div>
+                  </form>
+              </div>
+          </div>
+        </div>
+      </section>
+      <!-- Modal  -->
+      <div class="modal fade" id="reply_modal" role="dialog">
+        <div class="modal-dialog">  
+            <!-- Modal content -->
+          <div class="modal-content">
+              <div class="modal-header">  
+                  <h4 class="modal-title">Reply</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              <div class="modal-body">
+                <p>Reply <span id="reply_name"></span></p>
+                <input type="hidden" id="reply_id" name="reply_id">
+                <textarea class="form-control" rows="5" id="reply_message"></textarea>
+                <button id="reply_btn" class="btn btn-info btn-block">Reply</button>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>     
+          </div>
+
+        </div>
+      </div>
+      <!-- /.content -->
+{% endblock main_content %}
+
+{% block custom_js %}
+
+
+<script>
+  // Fonction pour afficher la pop-up
+  function afficherPopUp() {
+    // Récupérer la pop-up par son ID
+    var popUp = document.getElementById('maPopUp');
+
+    // Afficher la pop-up
+    popUp.style.display = 'block';
+  }
+
+  // Lorsque le bouton est cliqué, afficher la pop-up
+  document.getElementById('repondreBtn').addEventListener('click', afficherPopUp);
+</script>
+
+<script>
+  // Fonction pour cacher la pop-up
+  function cacherPopUp() {
+    // Récupérer la pop-up par son ID
+    var popUp = document.getElementById('maPopUp');
+
+    // Cacher la pop-up
+    popUp.style.display = 'none';
+  }
+</script>
+
+{% endblock custom_js %}

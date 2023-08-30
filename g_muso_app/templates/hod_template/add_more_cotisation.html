@@ -1,0 +1,93 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+SAVE MORE COTISATION
+{% endblock page_title %}
+{% block main_content %}
+<section class="content">
+        <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+                  
+                <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Sauvegarder Plusieurs Cotisations en meme temps</h3>
+                      </div>
+                        <form method="post" action="{% url 'add_more_cotisation_save' %}">
+                            {% csrf_token %}
+                            
+                            <table>
+                            <thead>
+                                <tr>
+                                <th><input type="checkbox" id="select-all"> Sélectionner tout </th>
+                                <th>Nom Membre</th>
+                                <th>Sélectionner</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                </tr>
+
+                                {% for membre in membre_info %}
+                                <tr>
+                                <td></td>
+                                <td>{{ membre.prenomp }} {{ membre.nomp }}</td>
+                                <td><input type="checkbox" name="membre_info[]" value="{{ membre.id }}"></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            </table>
+                            <br>
+                            <label for="date">Date:</label>
+                            <input  type="date" id="date" name="date">
+                        
+                            <br>
+                            <label for="montant">Montant:</label>
+                            <input class="form-control" type="number" id="montant" name="montant" step="0.01" value="0">
+
+                            <label for="interet">Interet:</label>
+                            <input class="form-control" type="number" id="interet" name="interet" step="0.01" value="0">
+
+                            
+                              <label for="type">Type Cotisation</label>
+                              <select class="form-control"  name="type" id="type">
+                                {% for type_coti in type_cotisation %}
+                                <option value="{{ type_coti.nom_cotisation }}">{{ type_coti.nom_cotisation }} </option>
+                                {% endfor %}
+                            </select>
+                         
+                        
+                            <div class="form-group">
+                                {% if messages %}
+                                <div class="col-12">
+                                {% for message in messages %}
+                                {% if message.tags == 'error' %}
+                                <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                                {% endif %}
+                                {% if message.tags == 'success' %}
+                                <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                                {% endif %}
+                                {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <input class="btn btn-primary" type="submit" value="Sauvegarder">
+                        </form>
+                    </div>
+           
+                </div>
+            </div>
+          </div>
+    </section>
+  {% endblock main_content %}
+  {% block custom_js %}
+  <script>
+    document.getElementById('select-all').addEventListener('change', function() {
+      var checkboxes = document.getElementsByName('membre_info[]');
+      for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = this.checked;
+      }
+    });
+  </script>
+   {% endblock custom_js %}

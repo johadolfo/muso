@@ -1,0 +1,99 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+Edit Remboursement | NO : {{ remboursements.id }}
+<!-- | Subject Name : {{ subject.subject_name }} | Subject ID : {{ subject.id }} -->
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+                    <!-- general form elements -->
+                <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Edit Remboursement</h3>
+                      </div>
+                      <!-- /.card-header -->
+                      <!-- form start -->
+                      <form role="form" action="/edit_remboursement_save" method="post">
+                        {% csrf_token %}
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Date Remboursement</label>
+                                <input type="date" class="form-control" name="date_remboursement" placeholder="Entrer la Date de remboursement"  value="{{ remboursements.date_remb | date:'Y-m-d' }}">
+                                <input type="hidden"  name="remboursement_id" value="{{ remboursements.id }}">
+                            </div>
+                          <div class="form-group">
+                                <label>Code Credit</label>
+                                <input type="text" class="form-control" name="numero_credit" placeholder="Entrer le numero de credit" value="{{ remboursements.codecredit.numero }}">
+                          </div>
+                         
+                          <div class="form-group">
+                            <label>Montant a rembourser</label>
+                            <input type="text" class="form-control" name="montant_a_rembourser" placeholder="Entrer le montant" value="{{ remboursements.montant_a_remb }}">
+                          </div>
+                          <div class="form-group">
+                            <label>Capital a rembourser</label>
+                            <input type="text" class="form-control" name="capital_a_rembourser" placeholder="Entrer le montant" value="{{ remboursements.capital_remb }}">
+                          </div>
+                          <div class="form-group">
+                            <label>Interet a rembourser</label>
+                            <input type="text" class="form-control" name="interet_a_rembourser" placeholder="Entrer le montant d'interet" value="{{ remboursements.interet_remb }}">
+                          </div>
+                          <div class="form-group">
+                            <label>Balance</label>
+                            <input type="text" class="form-control" name="balance_remb" placeholder="Entrer la balancet" value="{{ remboursements.balance }}">
+                          </div>
+                          <div class="form-group">
+                            <label>Penalite sur le remboursement</label>
+                            <input type="text" class="form-control" name="penalite_remb" placeholder="Entrer le montant" value="{{ remboursements.penalite }}">
+                          </div>
+                          <div class="form-group">
+                            <label >Commentaire</label>
+                            <textarea class="form-control" rows="5" name="commentaire" >{{ remboursements.commentaire }}</textarea>
+                          </div>
+                          
+                          <div class="form-group">
+                            <label >Membre</label>
+                            <select class="form-control"  name="membre">
+                            {% for membre in membre_info %}
+                              <option value="{{ membre.id}}" {% if membre.id == remboursements.faites_par.id %} selected {% endif %}>{{ membre.prenomp }} {{ membre.nomp }}</option>
+                            {% endfor %}
+                            </select>
+                            </div>
+                          
+                          <div class="form-group">
+                                <label>Recu Par</label>
+                                <input type="text" class="form-control" name="recu_par" placeholder="Entrer le nom de la personne " value="{{ remboursements.recu_par }}">
+                          </div>
+   
+                          <div class="form-group">
+                            {% if messages %}
+                            <div class="col-12">
+                              {% for message in messages %}
+                              {% if message.tags == 'error' %}
+                              <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% if message.tags == 'success' %}
+                              <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% endfor %}
+                            </div>
+                            {% endif %} 
+                          </div>
+                        </div>
+                        <!-- /.card-body -->
+        
+                        <div class="card-footer">
+                          <button type="submit" class="btn btn-primary btn-block">Edit Remboursement</button>
+                        </div>
+                      </form>
+                </div>
+                    <!-- /.card -->
+              </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+{% endblock main_content %}

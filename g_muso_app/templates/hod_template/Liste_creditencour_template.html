@@ -1,0 +1,176 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+Liste des Credits ENCOUR  <a href="{% url 'export_credit_csv' %}" class="btn btn-primary">Export to CSV</a> <a href="{% url 'add_credit' %}" class="btn btn-primary">Ajouter Nouveau Credit</a>
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Credits Details: <button type="button" class="btn btn-success" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> QTE CREDIT : {{ qte_credit }}</button>  <button type="button" class="btn btn-dark" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> Interet pour ce mois en cour : {{ montant_total_interet | floatformat:2 }} Gourdes</button>
+                      </h3>
+                      <div class="card-tools">
+                      <form >
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                          <input type="text" name="q" class="form-control float-right" placeholder="Search">
+      
+                          <div class="input-group-append">
+                            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                            <a href="{% url 'liste_credit_encour' %}" class="btn btn-dark" style="margin-left: 2px";><i class="fas fa-sync-alt"></i></a>
+                          </div>
+                        </div>
+                      </form>
+                      </div>
+                    </div>
+                    <div class="row">
+                    <!-- /.card-header -->
+                    
+                            {% for credit in credits %}
+
+                            <div class="col-md-4">
+                              <!-- Widget: user widget style 1 -->
+                              <div class="card card-widget widget-user">
+                                <!-- Add the bg color to the header using any of the bg-* classes -->
+                                <div class="widget-user-header bg-info">
+                                  <h3 class="widget-user-username">{{ credit.11 }} {{ credit.12 }}</h3>
+                                  <h5 class="widget-user-desc">No Credit: {{ credit.0 }}</h5>
+                                </div>
+                                <div class="widget-user-image">
+                                  <img src="{{ credit.10 }}" class="img-circle elevation-2" alt="User Image" > 
+                                </div>
+                                <div class="card-footer">
+                                  <div class="row">
+                                   
+
+                                     <!-- /.col -->
+                                     <div class="col-sm-4 border-right">
+                                      <div class="description-block">
+                                        <h5 class="description-header"> {{ credit.6 | floatformat:2 }} Gourdes</h5>
+                                        <span class="description-text">Montant Total a Rembourser</span>
+                                      </div>
+                                      <!-- /.description-block -->
+                                    </div>
+
+                                     <!-- /.col -->
+                                     <div class="col-sm-4 border-right">
+                                      <div class="description-block">
+                                        <h5 class="description-header"> {{ credit.3 | floatformat:2 }} Gourdes</h5>
+                                        <span class="description-text">Montant Rembourser</span>
+                                      </div>
+                                      <!-- /.description-block -->
+                                    </div>
+
+                                    <div class="col-sm-4 border-right">
+                                      <div class="description-block">
+                                        <h5 class="description-header">{{ credit.4 | floatformat:2 }} Gourdes</h5>
+                                        <span class="description-text">Montant Restant</span>
+                                      </div>
+                                      <!-- /.description-block -->
+                                    </div>
+                                    
+                                    
+                                  </div>
+                                  <hr>
+                                  <!-- /.col -->
+                                  
+                                    <div class="description-block">
+                                      
+                                      <h5 class="description-header">Qtité de versement Restant:{{ credit.2 | floatformat:0 }}</h5>
+                                      Interet Rentré par rembousement: {{ credit.14 | floatformat:0 }} gdes<br>
+                                      Date debut:{{ credit.8 |date:"d/m/Y"  }} et Date fin:{{ credit.9 |date:"d/m/Y" }}
+                                    </div>
+                                    <!-- /.description-block -->
+                                  
+                                  <!-- /.col -->
+                                  <!-- /.row -->
+                                </div>
+                              </div>
+                              <!-- /.widget-user -->
+                            </div>
+
+                            <!--
+                            <div class="col-md-3 col-sm-6 col-12">
+                                <div class="info-box bg-warning">
+                                  <span class="user-panel mt-3 pb-3 mb-3 d-flex">
+                                    <div class="image">
+                                    <img src="{{ credit.8 }}" class="img-circle elevation-2" alt="User Image" style="opacity: .8; transform: scale(1.5); margin-right: 10px; margin-left: 5px;"> 
+                                    <p>
+                                      <br>
+                                      {{ credit.9 }} {{ credit.10 }}
+                                       </p>
+                                  </div>
+                                    
+                                  </span>
+                    
+                                  <div class="info-box-content">
+                                    <span class="info-box-text">No Credit: {{ credit.0 }}</span>  Montant Restant
+                                    <span class="info-box-number"> {{ credit.4 | floatformat:2 }} Gourdes </span>
+                                    en {{ credit.2 | floatformat:0 }} versement
+                                    <div class="progress">
+                                      <div class="progress-bar" style="width: 70%"></div>
+                                    </div>
+                                    Montant Total a verser
+                                    <span class="progress-description">
+                                      {{ credit.6 | floatformat:2 }} Gourdes
+                                    </span>
+                                  </div>
+                                  
+                                </div>
+                                
+                            </div>-->
+
+                            <!--- <td>{{ credit.numero }}</td>
+                            <td>{{ credit.code_membre.prenomp }} {{ credit.code_membre.nomp }}</td>
+                            <td>{{ credit.date_credit }}</td>
+                            <td>{{ credit.nbre_de_mois }}</td>
+                            <td>{{ credit.date_debut }}</td>
+                            <td>{{ credit.date_fin }}</td>
+                            <td>{{ credit.montant_credit }}</td>
+                            <td>{{ credit.interet_credit }}</td>-->
+                           
+                           
+                          {% endfor %}
+                       
+                    
+                  </div>
+                    <!-- Pagination -->
+                    <nav class="mt-4">
+                      {% if credits.has_other_pages %}
+                      <ul class="pagination justify-content-left">
+                        {% if credits.has_previous %}
+                        <a href="?page= 1 " class="btn btn-outline-primary mb-4" style="width: 69 px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">First</a>
+                        <li class="page-item"><a class="page-link" href="?page={{ credits.previous_page_number }}"><i class="fas fa-angle-double-left"></i></a></li>
+                        {% else %}
+                        <li class="page-item disabled"></li>
+                        {% endif %}
+                        
+                        {% for i in credits.paginator.page_range %}
+                          {% if credits.number == 1 %}
+                          <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only"></span></span></li>
+                          {% else %}
+                          <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                          {% endif %}
+                        {% endfor %}
+
+                        {% if credits.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ credits.next_page_number }}" ><i class="fas fa-angle-double-right"></i></a></li>
+                        <a href="?page={{ credits.paginator.num_pages }}" class="btn btn-outline-primary mb-4" style="width:60px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">Last</a>
+                        {% else %}
+                        <li class="page-item disabled"></li>
+                        {% endif %}
+                      </ul>
+                    {% endif %}
+                    </nav>
+                    <!-- /.card-body -->
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+            </div>
+        </div>
+    </section>
+      <!-- /.content -->
+{% endblock main_content %}

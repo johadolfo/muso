@@ -1,0 +1,94 @@
+{% extends 'adm_template/base_template.html' %}
+{% block page_title %} 
+Add New USER
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Ajouter Nouveau Utilisateur</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form role="form" action="/show_aceess" method="post">
+                            {% csrf_token %}
+
+                            <div class="card-body table-responsive p-0">
+                              <table class="table table-hover text-nowrap">
+                                    <thead>
+                                        <tr>
+                                            <th><label>Membre</label></th> 
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="form-group">
+                                                    <select class="form-control" name="membre">
+                                                        {% for membre in membres %}
+                                                            <option value="{{ membre.id }}">{{ membre.first_name }} {{ membre.last_name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <thead>
+                                        <tr>
+                                            <th>Les Droits</th> 
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                {% csrf_token %}
+                                                {% for permiss in initial_data %}
+                                                    <input type="checkbox" name="permiss" value="{{ permiss.id }}">
+                                                    <label>{{ permiss.name }}</label><br>
+                                                {% endfor %}
+                                            </td>
+                                        </tr>
+                                  </tbody>
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <div class="form-group">
+                                                    {% if messages %}
+                                                        <div class="col-12">
+                                                            {% for message in messages %}
+                                                                {% if message.tags == 'error' %}
+                                                                    <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                                                                {% endif %}
+                                                                {% if message.tags == 'success' %}
+                                                                    <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                                                                {% endif %}
+                                                                {% endfor %}
+                                                          </div>
+                                                      {% endif %}
+                                                  </div>
+                                              </th>
+                                            </tr>
+                                        </thead>
+                                <tbody>
+                                  <tr>
+                                      <td>
+                                        <input type="submit" value="Valider">
+                                      </td>
+                                    </tr>
+                                </tbody>
+                              </table>    
+                            </div>
+                        </form>
+                    </div>
+                      <!-- /.card -->
+                  </div>
+                </div>
+            </div>
+        </section>
+<!-- /.content -->
+{% endblock main_content %}

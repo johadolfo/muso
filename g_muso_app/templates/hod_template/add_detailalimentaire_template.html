@@ -1,0 +1,90 @@
+{% extends 'hod_template/base_template.html' %}
+{% block page_title %} 
+Ajouter Detail Products
+{% endblock page_title %}
+{% block main_content %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12">
+                    <!-- general form elements -->
+                <div class="card card-primary">
+                      <div class="card-header">
+                        <h3 class="card-title">Ajouter Alimentaire</h3>
+                      </div>
+                      <!-- /.card-header -->
+                      <!-- form start -->
+                      <form role="form" action="/add_detailalimentaire_save" method="post">
+                        {% csrf_token %}
+                        <div class="card-body">
+                          <div class="form-group">
+                                <label>Code Credit</label>
+                                <input type="text" id="numero_credit" class="form-control" name="numero_credit" placeholder="Entrer le numero de credit">
+                          </div>
+
+                          <div class="form-group">
+                            <label>Description article</label>
+                            <input type="text" id="montant_remb" class="form-control" name="description" placeholder="Entrer le montant">
+                          </div>
+                          <div class="form-group">
+                            <label>Quantite</label>
+                            <input type="text" class="form-control" name="quantite_prod" placeholder="Entrer le montant">
+                          </div>
+                          <div class="form-group">
+                            <label>Unite</label>
+                            <input type="text" class="form-control" name="unite" placeholder="kes">
+                          </div>
+                          <div class="form-group">
+                            <label>Prix Unitaire</label>
+                            <input type="text" class="form-control" name="prix_unitaire" placeholder="Entrer le montant d'interet">
+                          </div>
+                          <div class="form-group">
+                            <label>Frais Transport</label>
+                            <input type="text" class="form-control" name="frais_transport" value="0">
+                          </div>
+                          
+                          <div class="form-group">
+                            {% if messages %}
+                            <div class="col-12">
+                              {% for message in messages %}
+                              {% if message.tags == 'error' %}
+                              <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% if message.tags == 'success' %}
+                              <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                              {% endif %}
+                              {% endfor %}
+                            </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <!-- /.card-body -->
+        
+                        <div class="card-footer">
+                          <button type="submit" class="btn btn-primary btn-block">Add Detail Product</button>
+                        </div>
+                      </form>
+                </div>
+                    <!-- /.card -->
+              </div>
+          </div>
+        </div>
+      </section>
+      <!-- /.content -->
+      {% endblock main_content %}
+
+      {% block custom_js %}
+      <script>
+          $(document).ready(function(){
+            $("#numero_credit").keyup(function(){
+                //var codecredit=$(this).val();
+                const txt1 = document.getElementById('numero_credit');
+                const montant_r = document.getElementById('montant_remb')
+                montant_r.innerHTML =txt1.val();
+        
+            });
+          });
+      </script>
+    {% endblock custom_js %}
+     
