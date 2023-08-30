@@ -24,7 +24,14 @@ urlpatterns = [
     path('demo', views.showDemoPage),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    #path('', views.home, name="home"),
     path('', views.ShowLoginPage, name="show_login"),
+    #path('', views.home, name="home"),
+    #path('login', views.login, name="login"),
+    #path('login_page/', views.login_page, name='login_page'),
+    
+    
+    #path('ShowLoginPage1', views.ShowLoginPage1, name="show_login1"),
     path('get_user_details', views.GetUserDetails),
     path('logout_user', views.logout_user, name="logout"),
     path('doLogin', views.doLogin, name="do_login"),
@@ -152,7 +159,12 @@ urlpatterns = [
     path('membre_profile', MembreViews.membre_profile, name="membre_profile"),
     path('membre_profile_save', MembreViews.membre_profile_save, name="membre_profile_save"),
 
-   
+    path('manage_membres', MembreViews.manage_membres, name="manage_membres"),
+
+    path('liste_credits_encour', MembreViews.liste_credits_encour, name="liste_credits_encour"),
+    
+    path('statistique_remboursements', MembreViews.statistique_remboursements, name="statistique_remboursements"),
+    path('statistique_credits', MembreViews.statistique_credits, name="statistique_credits"),
 
     path('add_mcomments_save', MembreViews.add_mcomments_save, name="add_mcomments_save"),
     path('profile_mview', MembreViews.profile_mview, name="profile_mview"),

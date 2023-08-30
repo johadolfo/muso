@@ -13,7 +13,7 @@ Home
               <div class="inner">
                 <h4 style="text-align: center;">{{ membre_count }}</h4>
 
-                <p>Total Membres</p>
+                <p style="font-weight: bold;">Total Membres</p>
               </div>
               <div class="icon">
                 <i class="ion ion-pie-graph"></i>
@@ -25,16 +25,16 @@ Home
           <!-- ./col -->
           <div class="col-lg-2 col-6">
             <!-- small box -->
-            <div class="small-box bg-success">
+            <div class="small-box bg-fuchsia">
               <div class="inner">
-                <h4>{{ montant_tot | floatformat:2 }}</h4>
+                <h4>{{ montant_total_credit | floatformat:2 }}</h4>
 
-                <p>Montant Total</p>
+                <p style="font-weight: bold;">Montant Total Credit</p>
               </div>
               <div class="icon">
                 <i class="ion ion-pie-graph"></i>
               </div>
-              <a href="{% url 'view_tbcotisation' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="{% url 'statistique_credit' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -42,9 +42,9 @@ Home
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h4>{{ montant_credit | floatformat:2 }}</h4>
+                <h4>{{ montant_total_credit_encour | floatformat:2 }}</h4>
 
-                <p>Montant Credit</p>
+                <p style="font-weight: bold;">Credit en Cour</p>
               </div>
               <div class="icon">
                 <i class="ion ion-pie-graph"></i>
@@ -55,42 +55,42 @@ Home
           <!-- ./col -->
           <div class="col-lg-2 col-6">
             <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h4>{{ remboursements_info.total_montant_remb | floatformat:2 }}</h4>
+
+                <p style="font-weight: bold;">Credit Remboursé</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+              <a href="{% url 'statistique_remboursement' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <!-- ./col -->
+          <div class="col-lg-2 col-6">
+            <!-- small box -->
+            <div class="small-box bg-orange">
+              <div class="inner">
+                <h4>{{ montant_total_restant | floatformat:2 }}</h4>
+
+                <p style="font-weight: bold;">Credit à Rembourser</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+              <a href="{% url 'statistique_remboursement' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-2 col-6">
+            <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h4>{{ montant_rembourse | floatformat:2 }}</h4>
+                <h4>{{ interet_anticipe }}</h4>
 
-                <p>Montant Remboursé</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-pie-graph"></i>
-              </div>
-              <a href="{% url 'manage_remboursement' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <!-- ./col -->
-          <div class="col-lg-2 col-6">
-            <!-- small box -->
-            <div class="small-box bg-info">
-              <div class="inner">
-                <h4>{{ interet_tot }}</h4>
-
-                <p>Montant Interet</p>
-              </div>
-              <div class="icon">
-                <i class="ion ion-pie-graph"></i>
-              </div>
-              <a href="{% url 'interets_ajoutes' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-            </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-2 col-6">
-            <!-- small box -->
-            <div class="small-box bg-warning">
-              <div class="inner">
-                <h4>{{ penalite_total }}</h4>
-
-                <p>Montant Penalité</p>
+                <p style="font-weight: bold;">Interet Anticipé</p>
              
               </div>
               <div class="icon">
@@ -98,7 +98,104 @@ Home
               </div>
               <a href="{% url 'interets_ajoutes' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
+           
           </div>
+
+           <!----suivant modification -->
+           <div class="col-lg-2 col-6">
+            <!-- small box -->
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h4>{{ montant_tot | floatformat:2 }}</h4>
+
+                <p style="font-weight: bold;">Montant Total</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+              <a href="{% url 'view_tbcotisation' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-2 col-6">
+            <!-- small box -->
+            <div class="small-box bg-fuchsia">
+              <div class="inner">
+                <h4>{{ interet_total | floatformat:2 }}</h4>
+
+                <p style="font-weight: bold;">Montant Total d'interet</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+              <a href="{% url 'statistique_credit' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-2 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h4>{{ interet_total_encour | floatformat:2 }}</h4>
+
+                <p style="font-weight: bold;">Interet en Cour</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+              <a href="{% url 'liste_credit_encour' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-2 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h4>{{ remboursements_info.total_interet_remb | floatformat:2 }}</h4>
+
+                <p style="font-weight: bold;">Interet Remboursé</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+              <a href="{% url 'statistique_remboursement' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <!-- ./col -->
+          <div class="col-lg-2 col-6">
+            <!-- small box -->
+            <div class="small-box bg-orange">
+              <div class="inner">
+                <h4>{{ Total_interet_restant | floatformat:2 }}</h4>
+
+                <p style="font-weight: bold;">Interet à Rembourser</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+              <a href="{% url 'statistique_remboursement' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-2 col-6">
+            <!-- small box -->
+            <div class="small-box bg-danger">
+              <div class="inner">
+                <h4>{{ penalite_total }}</h4>
+
+                <p style="font-weight: bold;">Montant Penalité</p>
+             
+              </div>
+              <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+              </div>
+              <a href="{% url 'interets_ajoutes' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+           
+          </div>
+
+           <!--Fin Modification-->
           <!-- ./col -->
     </div>
     <div class="row">

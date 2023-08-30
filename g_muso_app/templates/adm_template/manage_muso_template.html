@@ -34,19 +34,17 @@ Liste des Muso <a href="{% url 'export_csv' %}" class="btn btn-primary">Export t
                         <thead>
                           <tr>
                             <th>NO</th>
-                            <th>Password</th>
-                            <th>Last Login</th>   
-                            <th>Is Super User</th>
-                            <th>Username</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
+                            <th>Sigle</th>
+                            <th>Nom</th>   
+                            <th>Adresse</th>
+                            <th>Telephone</th>
                             <th>Email</th>
-                            <th>Staff </th>
-                            <th>Is Active</th>
-                            <th>Date Added</th>
-                            <th>Type User</th>
-                            <th>Muso </th>
-                            
+                            <th>Site</th>
+                            <th>Date Creation</th>
+                            <th>Taux d'interet </th>
+                            <th>Couleur Menu de gauche</th>
+                            <th>Couleur Text de menu</th>
+                            <th>logo</th>
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -61,17 +59,10 @@ Liste des Muso <a href="{% url 'export_csv' %}" class="btn btn-primary">Export t
                             <td>{{ muso.email_muso }}</td>
                             <td>{{ muso.site_muso }}</td>
                             <td>{{ muso.date_creation }}</td>
-                            <td>{{ muso.adresse_muso }}</td>
-                            <td>{{ muso.telephone_muso }}</td>
-                            <td>{{ muso.email_muso }}</td>
-                            <td>{{ muso.site_muso }}</td>
-                            <td>{{ muso.date_creation }}</td>
-                            <td><img src="{{ muso.logo }}" style="width:50px"/></td>
-                           
-                           
-                            <td>
-                            
-                            </td>
+                            <td>{{ muso.taux_interet }}</td>
+                            <td>{{ muso.couleur_preferee }}</td>
+                            <td>{{ muso.couleur_text_menu }}</td>
+                            <td><img src="{{ muso.logo_muso }}" style="width:50px"/></td>
                             <td> <a href="{% url 'edit_muso'  muso_id=muso.id %}" class="btn btn-success">Edit</a></td>
                           </tr>
                           {% endfor %}

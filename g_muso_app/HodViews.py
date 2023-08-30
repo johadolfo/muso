@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.core.paginator import Paginator
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count,  F
 from django.db import connection
 import csv
 from django.db import transaction
@@ -36,6 +36,8 @@ from django.db.models import Sum, FloatField
 from django.db.models import F, ExpressionWrapper, FloatField, Subquery, OuterRef
 from django.shortcuts import render, get_object_or_404
 import random
+from django.utils import timezone
+import sqlite3
 
 def admin_home(request):
     current_user = request.user
@@ -94,7 +96,89 @@ def admin_home(request):
     penalite_total_cot =sum(cotisation_info.values_list('penalite', flat=True))
     penalite_total = sum(remboursement_info.values_list('penalite', flat=True)) + penalite_total_cot
 
-    return render(request, "hod_template/home_content.html",{ "credit_info":credit_info, "membre_count":membre_count, "montant_tot":montant_tot, "montant_credit":montant_credit,"montant_rembourse":montant_rembourse, "remb_info":remb_info, "montant_ccredit":montant_ccredit, "montant_ijans":montant_ijans, "montant_fonk":montant_fonk , "valeur2":valeur2, "interet_tot":interet_tot, "num_visitor":num_visitor, "penalite_total":penalite_total})
+    #modificatio apporter
+    creditsmt = tbcredit.objects.filter(code_membre__admin_id__muso_id=current_user.muso)
+    
+    montant_total_credit = creditsmt.aggregate(Sum('montant_credit'))['montant_credit__sum']
+    
+    creditsit = creditsmt.annotate(
+        interet_montant=F('montant_credit') * F('interet_credit') * F('nbre_de_mois')
+    )
+    
+    interet_total = creditsit.aggregate(Sum('interet_montant'))['interet_montant__sum']
+    
+    #-----
+    creditencour = tbcredit.objects.filter(code_membre__admin_id__muso_id=current_user.muso, credit_status='En cour')
+    
+    montant_total_credit_encour = creditencour.aggregate(Sum('montant_credit'))['montant_credit__sum']
+    
+    creditssencour = creditencour.annotate(
+        interet_montant=F('montant_credit') * F('interet_credit') * F('nbre_de_mois')
+    )
+    
+    interet_total_encour = creditssencour.aggregate(Sum('interet_montant'))['interet_montant__sum']
+
+    #------------
+    remboursements_info = tbremboursement.objects.filter(codecredit__code_membre__admin__muso_id=current_user.muso).aggregate(total_montant_remb=Sum('montant_a_remb'),total_interet_remb=Sum('interet_remb'))
+   #-------------------
+    db_path = "db.sqlite3"
+    
+    query = """
+        SELECT 
+    g_muso_app_tbcredit.numero AS codecredit_id,
+    COUNT(g_muso_app_tbremboursement.id) AS quantite_remboursement,
+    (g_muso_app_tbcredit.nbre_de_mois - COUNT(g_muso_app_tbremboursement.id)) AS Qtee_restant,
+    IFNULL(SUM(g_muso_app_tbremboursement.capital_remb), 0) + IFNULL(SUM(g_muso_app_tbremboursement.interet_remb), 0) AS montant_total_rembourse,
+    (((g_muso_app_tbcredit.nbre_de_mois * (g_muso_app_tbcredit.interet_credit * g_muso_app_tbcredit.montant_credit)) + g_muso_app_tbcredit.montant_credit) - (sum(IFNULL(g_muso_app_tbremboursement.capital_remb, 0) + (IFNULL(g_muso_app_tbremboursement.interet_remb, 0))))) AS montant_total_Restant,
+    IFNULL(SUM(g_muso_app_tbremboursement.interet_remb), 0) AS total_interet,
+    (g_muso_app_tbcredit.nbre_de_mois * (g_muso_app_tbcredit.interet_credit * g_muso_app_tbcredit.montant_credit)) + g_muso_app_tbcredit.montant_credit AS Montant_tot,
+    (IFNULL(SUM(g_muso_app_tbremboursement.interet_remb), 0) * nbre_de_mois) - IFNULL(SUM(g_muso_app_tbremboursement.interet_remb), 0) AS total_interet_restant,
+    g_muso_app_tbcredit.date_debut, g_muso_app_tbcredit.date_fin,
+    g_muso_app_membre.profile_pic, g_muso_app_membre.prenomp, g_muso_app_membre.nomp,
+    SUM(penalite) AS total_penalite, (g_muso_app_tbcredit.interet_credit * g_muso_app_tbcredit.montant_credit) AS interetCredit
+    FROM
+        g_muso_app_tbcredit 
+    LEFT JOIN
+        g_muso_app_tbremboursement  ON g_muso_app_tbcredit.numero = g_muso_app_tbremboursement.codecredit_id
+    JOIN
+        g_muso_app_Membre  ON g_muso_app_tbcredit.code_membre_id = g_muso_app_Membre.id
+    JOIN
+        g_muso_app_CustomUser  ON g_muso_app_Membre.admin_id = g_muso_app_CustomUser.id
+    WHERE
+        (g_muso_app_tbcredit.credit_status = 'En cour' OR g_muso_app_tbremboursement.id IS NULL)
+        AND g_muso_app_CustomUser.muso_id = ?
+        
+    GROUP BY
+        g_muso_app_tbcredit.numero, g_muso_app_tbcredit.nbre_de_mois, g_muso_app_tbcredit.interet_credit, g_muso_app_tbcredit.montant_credit,
+        g_muso_app_tbcredit.date_debut, g_muso_app_tbcredit.date_fin,
+        g_muso_app_Membre.profile_pic, g_muso_app_Membre.prenomp, g_muso_app_Membre.nomp
+    ORDER BY
+        codecredit_id ASC;
+    """
+
+    # Créez une connexion à la base de données
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    current_users = request.user
+   
+    # Exécutez la requête
+    cursor.execute(query, (current_users.muso_id,))
+
+    # Parcourez les résultats pour calculer la somme du montant_total_Restant
+    montant_total_restant = 0
+    Total_interet_restant = 0
+    for row in cursor.fetchall():
+        montant_total_restant += row[4]
+        Total_interet_restant += row[7]
+
+    #-------------interet anticipe------------
+    interet_anticipe = tbcredit.objects.filter(
+    tbremboursement__interet_remb=0,
+    code_membre__admin__muso_id=current_user.muso
+    ).aggregate(
+    interet_anticipe=Sum(F('montant_credit') * F('interet_credit'))
+    )['interet_anticipe']
+    return render(request, "hod_template/home_content.html",{"interet_anticipe":interet_anticipe, "Total_interet_restant":Total_interet_restant, "montant_total_restant":montant_total_restant, "montant_total_credit":montant_total_credit, "interet_total":interet_total, "montant_total_credit_encour":montant_total_credit_encour, "interet_total_encour":interet_total_encour, "remboursements_info":remboursements_info,   "credit_info":credit_info, "membre_count":membre_count, "montant_tot":montant_tot, "montant_credit":montant_credit,"montant_rembourse":montant_rembourse, "remb_info":remb_info, "montant_ccredit":montant_ccredit, "montant_ijans":montant_ijans, "montant_fonk":montant_fonk , "valeur2":valeur2, "interet_tot":interet_tot, "num_visitor":num_visitor, "penalite_total":penalite_total})
    
 def add_personne(request):
     pass
@@ -170,7 +254,7 @@ def add_tbcotisation(request):
     current_user = request.user
     muso_id = current_user.muso_id
     cotisations = tbcotisation.objects.filter(code_membre__admin__muso = muso_id)
-    membre_info = Membre.objects.filter(admin__muso=current_user.muso)
+    membre_info = Membre.objects.filter(admin__muso=current_user.muso, membre_actif='True')
     membres = CustomUser.objects.filter(user_type=2, muso=current_user.muso)
     type_cotisation = tbtypecotisation.objects.filter(cotisation_muso=muso_id)
     return render(request, "hod_template/add_cotisation_template.html", {"is_button_disabled": is_button_disabled, "membres":membres, "cotisations":cotisations, "membre_info":membre_info, "type_cotisation":type_cotisation})
@@ -206,8 +290,10 @@ def add_cotisation_save(request):
         
 def add_more_cotisation(request):
     current_user = request.user
+    muso_id = current_user.muso_id
+    type_cotisation = tbtypecotisation.objects.filter(cotisation_muso=muso_id)
     membre_info = Membre.objects.filter(admin__muso=current_user.muso, membre_actif='True')
-    return render(request, "hod_template/add_more_cotisation.html", { "membre_info":membre_info})
+    return render(request, "hod_template/add_more_cotisation.html", { "membre_info":membre_info, "type_cotisation":type_cotisation})
 
 def add_more_cotisation_save(request):
         if request.method == 'POST':
@@ -234,7 +320,7 @@ def add_credit(request):
     current_user = request.user
     muso_id = current_user.muso_id
     credits = tbcredit.objects.filter(code_membre__admin__muso=current_user.muso_id)
-    membre_info = Membre.objects.filter(admin__muso=current_user.muso_id)
+    membre_info = Membre.objects.filter(admin__muso=current_user.muso_id, membre_actif='True')
     membres = CustomUser.objects.filter(user_type=2, muso=current_user.muso_id)
     muso_idd = str(muso_id)
     interet_muso = tbmuso.objects.get(id=muso_idd)
@@ -271,7 +357,7 @@ def add_remboursement(request):
     muso_id = current_user.muso
     remboursements = tbremboursement.objects.all()
     credits=tbcredit.objects.all()
-    membre_info = Membre.objects.filter(admin__muso=current_user.muso)
+    membre_info = Membre.objects.filter(admin__muso=current_user.muso, membre_actif='True')
     membres = CustomUser.objects.filter(user_type=2,muso=current_user.muso)
     return render(request, "hod_template/add_remboursement_template.html", {"membres":membres, "remboursements":remboursements, "membre_info":membre_info, "credits":credits})
 
@@ -656,6 +742,100 @@ def liste_credit(request):
 def liste_credit_encour(request):
     current_user = request.user
     muso_id = current_user.muso_id
+
+    query = """
+     SELECT 
+    g_muso_app_tbcredit.numero AS codecredit_id,
+    COUNT(g_muso_app_tbremboursement.id) AS quantite_remboursement,
+    (g_muso_app_tbcredit.nbre_de_mois - COUNT(g_muso_app_tbremboursement.id)) AS Qtee_restant,
+    IFNULL(SUM(g_muso_app_tbremboursement.capital_remb), 0) + IFNULL(SUM(g_muso_app_tbremboursement.interet_remb), 0) AS montant_total_rembourse,
+    (((g_muso_app_tbcredit.nbre_de_mois * (g_muso_app_tbcredit.interet_credit * g_muso_app_tbcredit.montant_credit)) + g_muso_app_tbcredit.montant_credit) - (sum(IFNULL(g_muso_app_tbremboursement.capital_remb, 0) + (IFNULL(g_muso_app_tbremboursement.interet_remb, 0))))) AS montant_total_Restant,
+    IFNULL(SUM(g_muso_app_tbremboursement.interet_remb), 0) AS total_interet,
+    (g_muso_app_tbcredit.nbre_de_mois * (g_muso_app_tbcredit.interet_credit * g_muso_app_tbcredit.montant_credit)) + g_muso_app_tbcredit.montant_credit AS Montant_tot,
+    (IFNULL(SUM(g_muso_app_tbremboursement.interet_remb), 0) * nbre_de_mois) - IFNULL(SUM(g_muso_app_tbremboursement.interet_remb), 0) AS total_interet_restant,
+    g_muso_app_tbcredit.date_debut, g_muso_app_tbcredit.date_fin,
+    g_muso_app_membre.profile_pic, g_muso_app_membre.prenomp, g_muso_app_membre.nomp,
+    SUM(penalite) AS total_penalite, (g_muso_app_tbcredit.interet_credit * g_muso_app_tbcredit.montant_credit) AS interetCredit
+    FROM
+        g_muso_app_tbcredit 
+    LEFT JOIN
+        g_muso_app_tbremboursement  ON g_muso_app_tbcredit.numero = g_muso_app_tbremboursement.codecredit_id
+    JOIN
+        g_muso_app_Membre  ON g_muso_app_tbcredit.code_membre_id = g_muso_app_Membre.id
+    JOIN
+        g_muso_app_CustomUser  ON g_muso_app_Membre.admin_id = g_muso_app_CustomUser.id
+    WHERE
+        (g_muso_app_tbcredit.credit_status = 'En cour' OR g_muso_app_tbremboursement.id IS NULL)
+        AND g_muso_app_CustomUser.muso_id = %s
+        
+    GROUP BY
+        g_muso_app_tbcredit.numero, g_muso_app_tbcredit.nbre_de_mois, g_muso_app_tbcredit.interet_credit, g_muso_app_tbcredit.montant_credit,
+        g_muso_app_tbcredit.date_debut, g_muso_app_tbcredit.date_fin,
+        g_muso_app_Membre.profile_pic, g_muso_app_Membre.prenomp, g_muso_app_Membre.nomp
+    ORDER BY
+        codecredit_id ASC;
+        """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, [int(muso_id)])
+        remboursement_info = cursor.fetchall()
+
+    if 'q' in request.GET:
+        q = request.GET['q']
+        queryparametre = """
+            SELECT 
+    g_muso_app_tbcredit.numero AS codecredit_id,
+    COUNT(g_muso_app_tbremboursement.id) AS quantite_remboursement,
+    (g_muso_app_tbcredit.nbre_de_mois - COUNT(g_muso_app_tbremboursement.id)) AS Qtee_restant,
+    IFNULL(SUM(g_muso_app_tbremboursement.capital_remb), 0) + IFNULL(SUM(g_muso_app_tbremboursement.interet_remb), 0) AS montant_total_rembourse,
+    (((g_muso_app_tbcredit.nbre_de_mois * (g_muso_app_tbcredit.interet_credit * g_muso_app_tbcredit.montant_credit)) + g_muso_app_tbcredit.montant_credit) - (sum(IFNULL(g_muso_app_tbremboursement.capital_remb, 0) + (IFNULL(g_muso_app_tbremboursement.interet_remb, 0))))) AS montant_total_Restant,
+    IFNULL(SUM(g_muso_app_tbremboursement.interet_remb), 0) AS total_interet,
+    (g_muso_app_tbcredit.nbre_de_mois * (g_muso_app_tbcredit.interet_credit * g_muso_app_tbcredit.montant_credit)) + g_muso_app_tbcredit.montant_credit AS Montant_tot,
+    (IFNULL(SUM(g_muso_app_tbremboursement.interet_remb), 0) * nbre_de_mois) - IFNULL(SUM(g_muso_app_tbremboursement.interet_remb), 0) AS total_interet_restant,
+    g_muso_app_tbcredit.date_debut, g_muso_app_tbcredit.date_fin,
+    g_muso_app_membre.profile_pic, g_muso_app_membre.prenomp, g_muso_app_membre.nomp,
+    SUM(penalite) AS total_penalite, (g_muso_app_tbcredit.interet_credit * g_muso_app_tbcredit.montant_credit) AS interetCredit
+    FROM
+        g_muso_app_tbcredit 
+    LEFT JOIN
+        g_muso_app_tbremboursement  ON g_muso_app_tbcredit.numero = g_muso_app_tbremboursement.codecredit_id
+    JOIN
+        g_muso_app_Membre  ON g_muso_app_tbcredit.code_membre_id = g_muso_app_Membre.id
+    JOIN
+        g_muso_app_CustomUser  ON g_muso_app_Membre.admin_id = g_muso_app_CustomUser.id
+    WHERE
+        (g_muso_app_tbcredit.credit_status = 'En cour' OR g_muso_app_tbremboursement.id IS NULL)
+        AND g_muso_app_CustomUser.muso_id = %s and g_muso_app_Membre.prenomp=%s 
+        
+    GROUP BY
+        g_muso_app_tbcredit.numero, g_muso_app_tbcredit.nbre_de_mois, g_muso_app_tbcredit.interet_credit, g_muso_app_tbcredit.montant_credit,
+        g_muso_app_tbcredit.date_debut, g_muso_app_tbcredit.date_fin,
+        g_muso_app_Membre.profile_pic, g_muso_app_Membre.prenomp, g_muso_app_Membre.nomp
+    ORDER BY
+        codecredit_id ASC;
+        """
+        
+
+        with connection.cursor() as cursor:
+            cursor.execute(queryparametre, [int(muso_id), q])
+            all_remboursement_info = cursor.fetchall()
+
+        #all_remboursement_info = tbremboursement.objects.filter(  Q(codecredit_id=q) ).values('codecredit_id').annotate(total=Count('codecredit_id'),faites_par__admin__muso = muso_id, sum=Sum('capital_remb')).order_by('-date_remb')
+    else:
+        #all_remboursement_info = tbremboursement.objects.filter(faites_par__admin__muso = muso_id).select_related("tbcredit").values('codecredit_id').annotate(total=Count('codecredit_id'), sum=Sum('capital_remb')).order_by('-date_remb')
+        all_remboursement_info = remboursement_info
+    paginator = Paginator(all_remboursement_info,15)
+    page = request.GET.get('page')
+    credits = paginator.get_page(page)
+    qte_credit =tbcredit.objects.filter(credit_status='En cour',code_membre__admin__muso = muso_id).count()
+    today = timezone.now()
+    montant_total_interet = tbcredit.objects.filter(credit_status='En cour',code_membre__admin__muso_id=1,).filter(Q(date_debut__lte=today, date_fin__gte=today) |Q(date_debut__gte=today)).aggregate(total_interet=Sum(F('interet_credit') * F('montant_credit')))['total_interet']
+    #montant_total_interet = tbcredit.objects.filter(credit_status='En cour',code_membre__admin__muso_id=1,).filter(Q(date_debut__lte=today, date_fin__gte=today) | Q(date_debut__gte=today)).aggregate(total_interet=Sum('interet_credit' * 'montant_credit'))['total_interet']
+    return render(request, "hod_template/liste_creditencour_template.html", { "credits":credits, "qte_credit":qte_credit, "montant_total_interet":montant_total_interet  })
+
+def liste_credit_encours(request):
+    current_user = request.user
+    muso_id = current_user.muso_id
     credits = tbcredit.objects.filter(credit_status='En cour', code_membre__admin__muso = muso_id).order_by('-date_credit')
 
     if 'q' in request.GET:
@@ -767,7 +947,7 @@ def statistique_credit(request):
         'interet_total_credit'
     ).order_by('date_debut')
     
-    result_tot = tbcredit.objects.filter(
+    '''result_tot = tbcredit.objects.filter(
         code_membre__id=F('code_membre_id'),
         code_membre__admin__id=F('code_membre__admin__id'),
         code_membre__admin__muso_id=muso_id,
@@ -782,7 +962,41 @@ def statistique_credit(request):
             Sum(((F('montant_credit') * F('interet_credit') * F('nbre_de_mois')) + F('montant_credit')) - F('montant_credit')),
             output_field=FloatField()
         )
-    )
+    )'''
+    #--------------modification------------------------
+    db_path = "db.sqlite3"
+    query = """
+        SELECT
+        SUM(montant_credit) AS sum_montant_credit,
+        SUM((montant_credit * interet_credit * nbre_de_mois) + montant_credit) AS montant_rembourser,
+        SUM(((montant_credit * interet_credit * nbre_de_mois) + montant_credit) - montant_credit) AS interet_total_credit
+        FROM
+            g_muso_app_tbcredit 
+        LEFT JOIN
+        
+            g_muso_app_Membre  ON g_muso_app_tbcredit.code_membre_id = g_muso_app_Membre.id
+        JOIN
+            g_muso_app_CustomUser  ON g_muso_app_Membre.admin_id = g_muso_app_CustomUser.id
+        WHERE
+            g_muso_app_CustomUser.muso_id = ?
+    """
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    current_users = request.user
+   
+    # Exécutez la requête
+    cursor.execute(query, (current_users.muso_id,))
+
+    # Parcourez les résultats pour calculer la somme du montant_total_Restant
+    montant_total_credit = 0
+    montant_total_remboursement = 0
+    montant_total_interet = 0
+    for row in cursor.fetchall():
+        montant_total_credit = row[0]
+        montant_total_remboursement = row[1]
+        montant_total_interet = row[2]
+
+    #---------------fin-modification---------------------
 
     
     query = """
@@ -845,7 +1059,7 @@ def statistique_credit(request):
     paginator = Paginator(all_credit_info,15)
     page = request.GET.get('page')
     credit_info = paginator.get_page(page)
-    return render(request, "hod_template/statistique_credit_template.html", { "credit_info":credit_info, "result_tot":result_tot, "interet_anticipe":interet_anticipe })
+    return render(request, "hod_template/statistique_credit_template.html", {"montant_total_credit":montant_total_credit, "montant_total_remboursement":montant_total_remboursement, "montant_total_interet":montant_total_interet,  "credit_info":credit_info, "interet_anticipe":interet_anticipe })
 
 def statistique_remboursement(request):
     current_user = request.user
@@ -919,7 +1133,7 @@ def statistique_cotisation(request):
     caissebleue = tbtypecotisation.objects.get(reference='cb', cotisation_muso=current_user.muso)
 
     query = """
-        select a.id, codep,  nomp || ' ' || prenomp AS nom_membre, sum(case when typecotisation = %s then montant else 0 END) as Montantcredit, sum(case when typecotisation = %s then montant END) as MontantFonct, sum(case when typecotisation = %s then montant else 0 END) as MontantUrgence, sum(interet) as MontantInteret,sum(penalite) as penalite, (sum(interet)+ sum(case when typecotisation = %s then montant else 0 END)+sum(case when typecotisation = %s then montant else 0 END)) as Montanttotal  from g_muso_app_membre a, g_muso_app_tbcotisation b, g_muso_app_customuser c where code_membre_id=a.id and a.admin_id=c.id and c.muso_id = %s group by code_membre_id 
+        select a.id, codep,  nomp || ' ' || prenomp AS nom_membre, sum(case when typecotisation = %s then montant else 0 END) as Montantcredit, sum(case when typecotisation = %s then montant END) as MontantFonct, sum(case when typecotisation = %s then montant else 0 END) as MontantUrgence, sum(interet) as MontantInteret,sum(penalite) as penalite, (sum(interet)+ sum(case when typecotisation = %s then montant else 0 END)+sum(case when typecotisation = %s then montant else 0 END)) as Montanttotal, membre_actif  from g_muso_app_membre a, g_muso_app_tbcotisation b, g_muso_app_customuser c where code_membre_id=a.id and a.admin_id=c.id and c.muso_id = %s group by code_membre_id 
     """
 
     with connection.cursor() as cursor:
@@ -988,9 +1202,23 @@ def edit_membre(request, membre_id):
     form.fields['telephone2p'].initial=membre_info.telephone2p
     form.fields['activiteprofessionp'].initial=membre_info.activiteprofessionp
     form.fields['referencep'].initial=membre_info.referencep
+    form.fields['profile_pic'].initial=membre_info.profile_pic
     form.fields['membre_actif'].initial=membre_info.membre_actif
     
     return render(request, "hod_template/edit_membre_template.html",{"form":form,"membre_info":membre_info, "id":membre_id})
+
+'''def edit_membre(request, membre_id):
+    membre = get_object_or_404(Membre, id=membre_id)
+
+    if request.method == 'POST':
+        form = EditMembreForm(request.POST, request.FILES, instance=membre)
+        if form.is_valid():
+            form.save()
+            return redirect('membres_list')  # Redirigez vers la liste des membres ou où vous le souhaitez
+    else:
+        form = EditMembreForm(instance=membre)  # Utilisez l'instance du membre pour pré-remplir le formulaire
+
+    return render(request, "hod_template/edit_membre_template.html", {"form": form, "membre_info": membre, "id": membre_id})'''
 
 def edit_membre_save(request):
     if request.method != "POST":
@@ -1316,15 +1544,19 @@ def membre_feedback_message(request):
 def membre_feedback_message_replied(request):
     current_user = request.user
     muso_id = current_user.muso_id
-    feedback_id=request.POST.get("id")
-    feedback_message=request.POST.get("message")
+    feedback_id=request.POST.get("id_message")
+    feedback_message=request.POST.get("reponse_message")
     try:
-        feedback=FeedBackMembre.objects.get(id=feedback_id, code_membre__admin_muso = muso_id)
+        feedback=FeedBackMembre.objects.get(id=feedback_id)
         feedback.feedback_reply=feedback_message
         feedback.save()
-        return HttpResponse(True)
+        messages.success(request,"Successfully Responded")
+        return HttpResponseRedirect(reverse("membre_feedback_message"))
+        #return HttpResponse(True)
     except:
-        return HttpResponse(False)
+        messages.error(request,traceback.format_exc())
+        return HttpResponseRedirect(reverse("membre_feedback_message"))
+        #return HttpResponse(False)
 
 def membre_leave_view(request):
     current_user = request.user

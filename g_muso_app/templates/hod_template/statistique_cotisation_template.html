@@ -44,29 +44,58 @@ Statistique des Cotisations <a href="{% url 'export_statistique_cotisation_csv' 
                         </thead>
                         <tbody>
                             {% for cotisation in cotisation_info %}  
-                          <tr>
-                            <td>{{ cotisation.0 }}</td>
-                            <td>
-                                <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.1 }}</button>
+                         
+
+                            {% if cotisation.9 == 0 %}
+                            <tr>
+                              <td>{{ cotisation.0 }}</td>
+                              <td>
+                                  <button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.1 }}</button>
+                              </td> 
+                              <td>
+                                <button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.2 }}</button>
+                            </td>
+                              <td>
+                                <button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.3 | floatformat:2 }}</button>
                             </td> 
                             <td>
-                              <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.2 }}</button>
+                              <button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.4 | floatformat:2 }}</button>
                           </td>
                             <td>
-                              <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.3 | floatformat:2 }}</button>
+                              <button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.5 | floatformat:2 }}</button>
                           </td> 
                           <td>
-                            <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.4 | floatformat:2 }}</button>
-                        </td>
-                          <td>
-                            <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.5 | floatformat:2 }}</button>
+                            <button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.6 | floatformat:2 }}</button>
                         </td> 
-                        <td>
-                          <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.6 | floatformat:2 }}</button>
-                      </td> 
-                            <td>{{ cotisation.7 | floatformat:2 }}</td>
-                            <td><button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.8 | floatformat:2 }}</button></td>
-                          </tr>
+                              <td>{{ cotisation.7 | floatformat:2 }}</td>
+                              <td><button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.8 | floatformat:2 }}</button></td>
+                            </tr>
+                            {% else %}
+                              <tr>
+                                <td>{{ cotisation.0 }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.1 }}</button>
+                                </td> 
+                                <td>
+                                  <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.2 }}</button>
+                              </td>
+                                <td>
+                                  <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.3 | floatformat:2 }}</button>
+                              </td> 
+                              <td>
+                                <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.4 | floatformat:2 }}</button>
+                              </td>
+                              <td>
+                                <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.5 | floatformat:2 }}</button>
+                              </td> 
+                              <td>
+                              <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.6 | floatformat:2 }}</button>
+                              </td> 
+                                <td>{{ cotisation.7 | floatformat:2 }}</td>
+                                <td><button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ cotisation.8 | floatformat:2 }}</button></td>
+                              </tr>
+                            {% endif %}
+
                          {% endfor %}
                         </tbody>
                       </table>

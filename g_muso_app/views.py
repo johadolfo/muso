@@ -12,9 +12,16 @@ from g_muso_app.models import tbmuso
 # Create your views here.
 def showDemoPage(request):
     return render(request, "demo.html")
-
+#def home(request):
+    #return render(request, "site_johnado/index.html")
+    
 def ShowLoginPage(request):
     return render(request, "login_page.html")
+
+#def login(request):
+    #return render(request, "site_johnado/login_page.html")
+
+
 
 def doLogin(request):
     if request.method != "POST":

@@ -4,70 +4,201 @@ Home
 {% endblock page_title %}
 {% block main_content %}
     <!-- Main content -->
+    
     <section class="content">
         <div class="container-fluid">
+     
           <div class="row">
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-info">
-              <div class="inner">
-                <h3>{{ membre_count }}</h3>
-
-                <p>Total Membres</p>
+          
+            <div class="col-lg-2 col-6">
+              <!-- small box -->
+              <div class="small-box bg-info">
+                <div class="inner">
+                  <h4 style="text-align: center;">{{ membre_count }}</h4>
+  
+                  <p style="font-weight: bold;">Total Membres</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="{% url 'manage_membres' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+               
               </div>
-              <div class="icon">
-              <i class="ion ion-stats-bars"></i>
-              </div>
-              <a href="{% url 'manage_membre' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-success">
-              <div class="inner">
-                 <h3>{{ montant_tot }}</h3> <!--<sup style="font-size: 20px">%</sup> -->
-
-                <p>Mon Solde</p>
+            <!-- ./col -->
+            <div class="col-lg-2 col-6">
+              <!-- small box -->
+              <div class="small-box bg-fuchsia">
+                <div class="inner">
+                  <h4>{{ montant_total_credit | floatformat:2 }}</h4>
+  
+                  <p style="font-weight: bold;">Montant Total Credit</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="{% url 'statistique_credits' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
-              <div class="icon">
-                <i class="ion ion-stats-bars"></i>
-              </div>
-              <a href="{% url 'membre_cotisation' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-warning">
-              <div class="inner">
-                <h3>{{ montant_credit | floatformat:2}}</h3>
-
-                <p>Montant Credit</p>
+            <!-- ./col -->
+            <div class="col-lg-2 col-6">
+              <!-- small box -->
+              <div class="small-box bg-warning">
+                <div class="inner">
+                  <h4>{{ montant_total_credit_encour | floatformat:2 }}</h4>
+  
+                  <p style="font-weight: bold;">Credit en Cour</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="{% url 'liste_credits_encour' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
-              <div class="icon">
-                <i class="ion ion-stats-bars"></i>
-              </div>
-              <a href="{% url 'manage_credit' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
-          </div>
-          <!-- ./col -->
-          <div class="col-lg-3 col-6">
-            <!-- small box -->
-            <div class="small-box bg-danger">
-              <div class="inner">
-                <h3>{{ montant_rembourse }}</h3>
-
-                <p>Montant Total Rembourser</p>
+            <!-- ./col -->
+            <div class="col-lg-2 col-6">
+              <!-- small box -->
+              <div class="small-box bg-success">
+                <div class="inner">
+                  <h4>{{ remboursements_info.total_montant_remb | floatformat:2 }}</h4>
+  
+                  <p style="font-weight: bold;">Credit Remboursé</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="{% url 'statistique_remboursements' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
               </div>
-              <div class="icon">
-                <i class="ion ion-pie-graph"></i>
-              </div>
-              <a href="{% url 'manage_remboursement' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
-          </div>
+            <!-- ./col -->
+            <!-- ./col -->
+            <div class="col-lg-2 col-6">
+              <!-- small box -->
+              <div class="small-box bg-orange">
+                <div class="inner">
+                  <h4>{{ montant_total_restant | floatformat:2 }}</h4>
+  
+                  <p style="font-weight: bold;">Credit à Rembourser</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="{% url 'statistique_remboursements' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-2 col-6">
+              <!-- small box -->
+              <div class="small-box bg-danger">
+                <div class="inner">
+                  <h4>{{ interet_anticipe }}</h4>
+  
+                  <p style="font-weight: bold;">Interet Anticipé</p>
+               
+                </div>
+                <div class="icon">
+                  <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="{% url 'statistique_remboursements' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+             
+            </div>
 
-        
+        <!----suivant modification -->
+        <div class="col-lg-2 col-6">
+          <!-- small box -->
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h4>{{ montant_tot | floatformat:2 }}</h4>
+
+              <p style="font-weight: bold;">Mon Solde</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{% url 'membre_cotisation' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-2 col-6">
+          <!-- small box -->
+          <div class="small-box bg-fuchsia">
+            <div class="inner">
+              <h4>{{ interet_total | floatformat:2 }}</h4>
+
+              <p style="font-weight: bold;">Montant Total d'interet</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{% url 'statistique_credits' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-2 col-6">
+          <!-- small box -->
+          <div class="small-box bg-warning">
+            <div class="inner">
+              <h4>{{ interet_total_encour | floatformat:2 }}</h4>
+
+              <p style="font-weight: bold;">Interet en Cour</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{% url 'statistique_remboursements' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-2 col-6">
+          <!-- small box -->
+          <div class="small-box bg-success">
+            <div class="inner">
+              <h4>{{ remboursements_info.total_interet_remb | floatformat:2 }}</h4>
+
+              <p style="font-weight: bold;">Interet Remboursé</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{% url 'statistique_remboursements' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <!-- ./col -->
+        <div class="col-lg-2 col-6">
+          <!-- small box -->
+          <div class="small-box bg-orange">
+            <div class="inner">
+              <h4>{{ Total_interet_restant | floatformat:2 }}</h4>
+
+              <p style="font-weight: bold;">Interet à Rembourser</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{% url 'statistique_remboursements' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-2 col-6">
+          <!-- small box -->
+          <div class="small-box bg-danger">
+            <div class="inner">
+              <h4>{{ penalite_total }}</h4>
+
+              <p style="font-weight: bold;">Montant Penalité</p>
+           
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{% url 'statistique_remboursements' %}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+         
+        </div>
+
+         <!--Fin Modification-->
           
           <!-- ./col -->
         </div>
@@ -164,14 +295,14 @@ Home
         $(document).ready(function(){
           var pieData = {
               labels:[
-                  'Fon Kredi',
-                  'Fon Ijans',
-                  'Fon Fonksyonman',
+              'Casisse Verte',
+              'Caisse Bleue',
+              'Caisse Rouge',
               ],
                 datasets : [
                   {
                   data : ['{{ montant_ccredit }}', '{{ montant_ijans }}', '{{ montant_fonk }}'],
-                  backgroundColor : ['#00a90a','#ED0010', '#2128F5']
+                  backgroundColor : ['#00a90a', '#2128F5','#ED0010']
                   }
                 ]
           };

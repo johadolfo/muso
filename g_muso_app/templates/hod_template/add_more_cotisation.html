@@ -37,22 +37,25 @@ SAVE MORE COTISATION
                                 {% endfor %}
                             </tbody>
                             </table>
-                        
+                            <br>
                             <label for="date">Date:</label>
-                            <input type="date" id="date" name="date">
+                            <input  type="date" id="date" name="date">
                         
+                            <br>
                             <label for="montant">Montant:</label>
-                            <input type="number" id="montant" name="montant" step="0.01">
+                            <input class="form-control" type="number" id="montant" name="montant" step="0.01" value="0">
 
                             <label for="interet">Interet:</label>
-                            <input type="number" id="interet" name="interet" step="0.01">
+                            <input class="form-control" type="number" id="interet" name="interet" step="0.01" value="0">
 
-                            <label for="type">Type de cotisation:</label>
-                            <select  name="type" id="type">
-                                <option value="Fond de Credit">Fond de Credit</option>
-                                <option value="Fond de Fonctionnement">Fond de Fonctionnement</option>
-                                <option value="Fond d'Urgence">Fond d'Urgence</option>
+                            
+                              <label for="type">Type Cotisation</label>
+                              <select class="form-control"  name="type" id="type">
+                                {% for type_coti in type_cotisation %}
+                                <option value="{{ type_coti.nom_cotisation }}">{{ type_coti.nom_cotisation }} </option>
+                                {% endfor %}
                             </select>
+                         
                         
                             <div class="form-group">
                                 {% if messages %}
@@ -69,7 +72,7 @@ SAVE MORE COTISATION
                                 {% endif %}
                             </div>
 
-                            <input type="submit" value="Sauvegarder">
+                            <input class="btn btn-primary" type="submit" value="Sauvegarder">
                         </form>
                     </div>
            

@@ -1,6 +1,6 @@
-{% extends 'hod_template/base_template.html' %}
+{% extends 'membre_template/base_template.html' %}
 {% block page_title %} 
-Statistique des Credits <a href="{% url 'export_statistique_credit_csv' %}" class="btn btn-primary">Export to CSV</a>
+Statistique des REMBOURSEMENTS <a href="{% url 'export_statistique_remboursement_csv' %}" class="btn btn-primary">Export to CSV</a>
 {% endblock page_title %}
 {% block main_content %}
     <!-- Main content -->
@@ -10,11 +10,7 @@ Statistique des Credits <a href="{% url 'export_statistique_credit_csv' %}" clas
                 <div class="col-12">
                   <div class="card">
                     <div class="card-header">
-                        <h1 class="card-title">Credits Details: <button type="button" class="btn btn-success" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> Montant Total Credit : {{ montant_total_credit | floatformat:2 }}</button> Qui donne:
-                            <button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> Mont. Tot. Remb: {{ montant_total_remboursement | floatformat:2 }}</button> et 
-                            <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> Mont. Tot. Interet: {{ montant_total_interet | floatformat:2 }}</button> 
-                            <button type="button" class="btn btn-info" disabled="disabled" data-toggle="modal" data-target="#reply_modal"> Interet Anticipe:  {{ interet_anticipe | floatformat:2 }}</button> 
-                          </h1>
+                      <h3 class="card-title"> Details</h3>
                     
                       <div class="card-tools">
                         <form>
@@ -35,28 +31,39 @@ Statistique des Credits <a href="{% url 'export_statistique_credit_csv' %}" clas
                         <thead>
                           <tr>
                             <th>NO Credit</th>
-                            <th>Montant Credit</th>
+                            <th>Quantite Remboursement Fait</th>
+                            <th>Quantite Restant</th>
                             <th>Montant Rembourser</th>
-                            <th>Montant Interet</th>
-                            <th>Date Debut Credit</th>
+                            <th>Montant Restant</th>
+                            <th>Total Interet</th>
+                            <th>Total Int. Restant</th>
+                            <th>Total Penalite</th>
                          
                           </tr>
                         </thead>
                         <tbody>
-                            {% for credit in credit_info %}  
+                            {% for remb in remboursement_info %}  
                           <tr>
-                            <td>{{ credit.numero }}</td>
+                            <td>{{ remb.0 }}</td>
                             <td>
-                                <button type="button" class="btn btn-success" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ credit.montant_credit | floatformat:2 }}</button>
+                                <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ remb.1 }}</button>
                             </td> 
                             <td>
-                              <button type="button" class="btn btn-danger" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ credit.montant_rembourser | floatformat:2 }}</button>
+                              <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ remb.2 }}</button>
+                          </td>
+                            <td>
+                              <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ remb.3 | floatformat:2 }}</button>
                           </td> 
                           <td>
-                            <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ credit.interet_total_credit | floatformat:2 }}</button>
+                            <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ remb.4 | floatformat:2 }}</button>
                         </td>
-                         
-                            <td>{{ credit.date_debut  }}</td>
+                          <td>
+                            <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ remb.5 | floatformat:2 }}</button>
+                        </td> 
+                        <td>
+                          <button type="button" class="btn btn-primary" disabled="disabled" data-toggle="modal" data-target="#reply_modal">{{ remb.6 | floatformat:2 }}</button>
+                      </td> 
+                            <td>{{ remb.7 | floatformat:2 }}</td>
                            
                           </tr>
                          {% endfor %}
@@ -66,26 +73,26 @@ Statistique des Credits <a href="{% url 'export_statistique_credit_csv' %}" clas
                     <!-- /.card-body -->
                   <!-- Pagination -->
                   <nav class="mt-4">
-                    {% if credit_info.has_other_pages %}
+                    {% if remboursement_info.has_other_pages %}
                     <ul class="pagination justify-content-left">
-                      {% if credit_info.has_previous %}
+                      {% if remboursement_info.has_previous %}
                       <a href="?page= 1 " class="btn btn-outline-primary mb-4" style="width: 69 px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">First</a>
-                      <li class="page-item"><a class="page-link" href="?page={{ credit_info.previous_page_number }}"><i class="fas fa-angle-double-left"></i></a></li>
+                      <li class="page-item"><a class="page-link" href="?page={{ remboursement_info.previous_page_number }}"><i class="fas fa-angle-double-left"></i></a></li>
                       {% else %}
                       <li class="page-item disabled"></li>
                       {% endif %}
                       
-                      {% for i in credit_info.paginator.page_range %}
-                        {% if credit_info.number == 1 %}
+                      {% for i in remboursement_info.paginator.page_range %}
+                        {% if remboursement_info.number == 1 %}
                         <li class="page-item active"><span class="page-link">{{ i }}<span class="sr-only"></span></span></li>
                         {% else %}
                         <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
                         {% endif %}
                       {% endfor %}
 
-                      {% if credit_info.has_next %}
-                      <li class="page-item"><a class="page-link" href="?page={{ credit_info.next_page_number }}" ><i class="fas fa-angle-double-right"></i></a></li>
-                      <a href="?page={{ credit_info.paginator.num_pages }}" class="btn btn-outline-primary mb-4" style="width:60px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">Last</a>
+                      {% if remboursement_info.has_next %}
+                      <li class="page-item"><a class="page-link" href="?page={{ remboursement_info.next_page_number }}" ><i class="fas fa-angle-double-right"></i></a></li>
+                      <a href="?page={{ remboursement_info.paginator.num_pages }}" class="btn btn-outline-primary mb-4" style="width:60px; border-radius:1px; border:1px solid #d3d3d3; border-left: 1px;">Last</a>
                       {% else %}
                       <li class="page-item disabled"></li>
                       {% endif %}

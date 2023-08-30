@@ -34,7 +34,8 @@ Membre Feedback
                                 <td> {{ feedback.created_at }}</td>
                                 <td>
                                     {% if feedback.feedback_reply == "" %}
-                                    <button class = "btn btn-info btn-lg" data-toggle = "modal" data-target = "#reply_modal">Reply</button>
+                            
+                                    <button id="repondreBtn" class = "btn btn-info btn-lg">Répondre</button>
                                     {% else %}
                                     {{ feedback.feedback_reply }}
                                     {% endif %}
@@ -43,9 +44,39 @@ Membre Feedback
                             {% endfor %}
                         </table>
                       </div>
-                   
+                     
                 </div>
                     <!-- /.card -->
+                    <div class="form-group">
+                      {% if messages %}
+                      <div class="col-12">
+                        {% for message in messages %}
+                        {% if message.tags == 'error' %}
+                        <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+                        {% endif %}
+                        {% if message.tags == 'success' %}
+                        <div class="alert alert-success" style="margin-top:10px ;">{{ message }}</div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                      {% endif %}
+                    </div>
+                    <form method="post" action="{% url 'membre_feedback_message_replied' %}">
+                      
+                    <div id="maPopUp" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
+                      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px;">
+                        <!-- Contenu de la pop-up -->
+                        <h2>Répondre au message</h2>
+                        {% for feedback in feedbacks %}
+                        <input type="hidden" name="id_message" value="{{ feedback.id }}">
+                        {% endfor %}
+                        <textarea rows="4" cols="50" name="reponse_message"></textarea>
+                        <br>
+                        <button type="submit" >Repondre</button>
+                        <button onclick="cacherPopUp()">Annuler</button>
+                      </div>
+                    </div>
+                  </form>
               </div>
           </div>
         </div>
@@ -76,14 +107,31 @@ Membre Feedback
 {% endblock main_content %}
 
 {% block custom_js %}
-<script type="text/javascript" >
-  $(document).ready(function(){
-    $(".reply_open_modal").click(function(){
-      var id=$(this).parents("tr").children("td:eq(0)").text();
-      var name=$(this).parents("tr").children("td:eq(2)").text();
-      $("#reply_id").val(id);
-      $("#reply_name").val(name);
-    })
-  })
+
+
+<script>
+  // Fonction pour afficher la pop-up
+  function afficherPopUp() {
+    // Récupérer la pop-up par son ID
+    var popUp = document.getElementById('maPopUp');
+
+    // Afficher la pop-up
+    popUp.style.display = 'block';
+  }
+
+  // Lorsque le bouton est cliqué, afficher la pop-up
+  document.getElementById('repondreBtn').addEventListener('click', afficherPopUp);
 </script>
+
+<script>
+  // Fonction pour cacher la pop-up
+  function cacherPopUp() {
+    // Récupérer la pop-up par son ID
+    var popUp = document.getElementById('maPopUp');
+
+    // Cacher la pop-up
+    popUp.style.display = 'none';
+  }
+</script>
+
 {% endblock custom_js %}

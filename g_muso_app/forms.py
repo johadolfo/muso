@@ -29,9 +29,9 @@ class AddMembreForm(forms.Form):
     activiteprofessionp =  forms.CharField(label="ACTIVITE / PROFESSION ",max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}),initial="Biznisman")
     referencep =  forms.CharField(label="REFERENCE ",max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}), initial="President")
     profile_pic=forms.FileField(label="Profile Pic", max_length=50, widget=forms.FileInput(attrs={"class":"form-control"}))
+    #profile_pic= forms.FileField(label="Profile Pic", max_length=50,widget=forms.ClearableFileInput(attrs={'accept': ''}))
     #muso = forms.ModelMultipleChoiceField(queryset=tbmuso.objects.all(), widget=forms.Select(attrs={"class":"form-control"}))
  
-
 
 class EditMembreForm(forms.Form):
     gender_choice=(
@@ -61,10 +61,11 @@ class EditMembreForm(forms.Form):
     activiteprofessionp =  forms.CharField(label="ACTIVITE / PROFESSION ",max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}),initial="Biznisman")
     referencep =  forms.CharField(label="REFERENCE ",max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}), initial="President")
     profile_pic=forms.FileField(label="Profile Pic", max_length=50, widget=forms.FileInput(attrs={"class":"form-control"}))
+    #profile_pic= forms.FileField(label="Profile Pic", max_length=50,widget=forms.ClearableFileInput(attrs={'accept': ''}))
     membre_actif=forms.ChoiceField(label="Status", choices=membre_status, widget=forms.Select(attrs={"class":"form-control"}))
-
-   
     
+
+
 class AddMusoForm(forms.Form):
     codemuso =  forms.CharField(label="CODE MUSO ",max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
     sigle =  forms.CharField(label="Sigle", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))

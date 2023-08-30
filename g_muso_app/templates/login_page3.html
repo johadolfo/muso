@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AdminLTE 3 | Log in</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static "plugins/fontawesome-free/css/all.min.css" %}">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="{% static "plugins/icheck-bootstrap/icheck-bootstrap.min.css" %} ">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static "dist/css/adminlte.min.css" %}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+</head>
+<body class="hold-transition login-page">
+  <nav id="navbar" class="navbar order-last order-lg-0">
+    <ul>
+      <li><a href="index.html" class="active">Home</a></li>
+
+      <li class="dropdown"><a href="#"><span>About</span> <i class="bi bi-chevron-down"></i></a>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="team.html">Team</a></li>
+          <div class="row">
+            <!-- /.card-header -->
+            
+                    {% for credit in credits %}
+
+                    <div class="col-md-4">
+                      <!-- Widget: user widget style 1 -->
+                      <div class="card card-widget widget-user">
+                        <!-- Add the bg color to the header using any of the bg-* classes -->
+                        <div class="widget-user-header bg-info">
+                          <h3 class="widget-user-username">{{ credit.9 }} {{ credit.10 }}</h3>
+                          <h5 class="widget-user-desc">No Credit: {{ credit.0 }}</h5>
+                        </div>
+                        <div class="widget-user-image">
+                          <img src="{{ credit.8 }}" class="img-circle elevation-2" alt="User Image" > 
+                        </div>
+                        <div class="card-footer">
+                          <div class="row">
+                            <div class="col-sm-4 border-right">
+                              <div class="description-block">
+                                <h5 class="description-header">{{ credit.4 | floatformat:2 }} Gourdes</h5>
+                                <span class="description-text">Montant Restant</span>
+                              </div>
+                              <!-- /.description-block -->
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-sm-4 border-right">
+                              <div class="description-block">
+                                <h5 class="description-header"> {{ credit.6 | floatformat:2 }} Gourdes</h5>
+                                <span class="description-text">Montant Total a Rembourser</span>
+                              </div>
+                              <!-- /.description-block -->
+                            </div>
+                            <!-- /.col -->
+                            <div class="col-sm-4">
+                              <div class="description-block">
+                                <h5 class="description-header">{{ credit.2 | floatformat:0 }}</h5>
+                                <span class="description-text">Qtité de versement Restant</span>
+                              </div>
+                              <!-- /.description-block -->
+                            </div>
+                            <!-- /.col -->
+                          </div>
+                          <!-- /.row -->
+                        </div>
+                      </div>
+                      <!-- /.widget-user -->
+                    </div>
+
+                    <!--
+                    <div class="col-md-3 col-sm-6 col-12">
+                        <div class="info-box bg-warning">
+                          <span class="user-panel mt-3 pb-3 mb-3 d-flex">
+                            <div class="image">
+                            <img src="{{ credit.8 }}" class="img-circle elevation-2" alt="User Image" style="opacity: .8; transform: scale(1.5); margin-right: 10px; margin-left: 5px;"> 
+                            <p>
+                              <br>
+                              {{ credit.9 }} {{ credit.10 }}
+                               </p>
+                          </div>
+                            
+                          </span>
+            
+                          <div class="info-box-content">
+                            <span class="info-box-text">No Credit: {{ credit.0 }}</span>  Montant Restant
+                            <span class="info-box-number"> {{ credit.4 | floatformat:2 }} Gourdes </span>
+                            en {{ credit.2 | floatformat:0 }} versement
+                            <div class="progress">
+                              <div class="progress-bar" style="width: 70%"></div>
+                            </div>
+                            Montant Total a verser
+                            <span class="progress-description">
+                              {{ credit.6 | floatformat:2 }} Gourdes
+                            </span>
+                          </div>
+                          
+                        </div>
+                        
+                    </div>-->
+
+                    <!--- <td>{{ credit.numero }}</td>
+                    <td>{{ credit.code_membre.prenomp }} {{ credit.code_membre.nomp }}</td>
+                    <td>{{ credit.date_credit }}</td>
+                    <td>{{ credit.nbre_de_mois }}</td>
+                    <td>{{ credit.date_debut }}</td>
+                    <td>{{ credit.date_fin }}</td>
+                    <td>{{ credit.montant_credit }}</td>
+                    <td>{{ credit.interet_credit }}</td>-->
+                   
+                   
+                  {% endfor %}
+               
+            
+          </div>
+        </ul>
+      </li>
+
+      <li><a href="services.html">Services</a></li>
+      <li><a href="portfolio.html">Portfolio</a></li>
+      <li><a href="pricing.html">Pricing</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="contact.html">Contact</a></li>
+
+    </ul>
+    <i class="bi bi-list mobile-nav-toggle"></i>
+  </nav><!-- .navbar -->
+<div class="login-box">
+  <div class="login-logo">
+    <a href="../../index2.html"><b>Mutuel</b>Solidarite System</a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+      <div class="content">
+
+      </div>
+      <div class="cover-connect ">
+      <p class="login-box-msg">Sign in to Mutuel Solidarite</p>
+      <form action="/doLogin" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+        </div> 
+        <div class="input-group mb-3">
+          <input type="email" class="form-control" placeholder="Email" name="email">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" placeholder="Password" name="password">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          </div>
+          <div class="col-12 text-center">
+            <a href="{% url 'password_reset' %}">Reset Password</a>
+          </div>
+          {% if messages %}
+          <div class="col-12">
+            {% for message in messages %}
+            {% if message.tags == 'error' %}
+            <div class="alert alert-danger" style="margin-top:10px ;">{{ message }}</div>
+            {% endif %}
+            {% endfor %}
+          </div>
+          {% endif %}
+          <!-- /.col -->
+        </div>
+      </form>
+
+    </div>
+      <!-- /.social-auth-links -->
+
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script src="{% static "plugins/jquery/jquery.min.js" %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static "plugins/bootstrap/js/bootstrap.bundle.min.js" %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static "dist/js/adminlte.min.js" %}"></script>
+
+</body>
+</html>

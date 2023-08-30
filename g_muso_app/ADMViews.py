@@ -18,24 +18,27 @@ from django.core import serializers
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.hashers import PBKDF2PasswordHasher
+from django.contrib.auth.hashers import make_password
 
 def adm_home(request):
     nombre_muso = tbmuso.objects.all().count()
     membre_count=Membre.objects.filter(membre_actif='True').count()
+    Membre_info = Membre.objects.filter(membre_actif='True')
     #membre_count_par_muso=Membre.objects.filter(membre_actif='True').group_by('admin__muso').count()
-    membre_count_par_muso=Membre.objects.values('admin__muso', 'admin__muso__nom_muso').annotate(dcount=Count('id')).order_by()
+    membre_count_par_muso=Membre_info.values('admin__muso', 'admin__muso__nom_muso').annotate(dcount=Count('id')).order_by()
     #membre_count_par_muso = Membre.objects.values('admin__muso').annotate(dcount=Count('admin__muso')).order_by()
     #muso_infoo = tbmuso.object.filter(id=membre_count_par_muso.admin__muso)
-    cotisation_info=tbcotisation.objects.all()
+    cotisation_info=tbcotisation.objects.filter(code_membre__membre_actif='True')
     montant_tot = sum(cotisation_info.values_list('montant', flat=True))
     
-    _credit  =tbcotisation.objects.filter(typecotisation__icontains='Fond de Credit')
+    _credit  =tbcotisation.objects.filter(typecotisation__icontains='Fond de Credit', code_membre__membre_actif='True')
     montant_ccredit = sum(_credit.values_list('montant', flat=True))
 
-    _ijans  =tbcotisation.objects.filter(typecotisation__icontains="Fond d'Urgence")
+    _ijans  =tbcotisation.objects.filter(typecotisation__icontains="Fond d'Urgence", code_membre__membre_actif='True')
     montant_ijans = sum(_ijans.values_list('montant', flat=True))
 
-    _fonctionnement  =tbcotisation.objects.filter(typecotisation__icontains='Fond de Fonctionnement')
+    _fonctionnement  =tbcotisation.objects.filter(typecotisation__icontains='Fond de Fonctionnement', code_membre__membre_actif='True')
     montant_fonk = sum(_fonctionnement.values_list('montant', flat=True))
 
     rembourseent_infor=tbremboursement.objects.all()
@@ -102,8 +105,6 @@ def add_muso1_save(request):
         except Exception as e:
             messages.error(request,traceback.format_exc())
             return HttpResponseRedirect(reverse("add_muso1"))
-
-
 
 def add_muso(request):
     form = AddMusoForm()
@@ -293,9 +294,6 @@ def edit_muso_save(request):
             muso = tbmuso.objects.get(id=muso_id)
             return render(request, "adm_template/edit_muso_template.html", {"form":form, "id":muso_id, "nom":muso.nom_muso})
     
-
-
-
 def edit_depenseAH(request, depense_id):
     depenses = tbdepense.objects.get(id=depense_id)
     return render(request, "adm_template/edit_depense_template.html", {"depenses":depenses})
@@ -328,41 +326,47 @@ def edit_depense_saveAH(request):
         
 def edit_user(request, user_id):
     muso_info = tbmuso.objects.all()
-    user = CustomUser.objects.get(id=user_id)
-    membres = CustomUser.objects.filter(user_type=2)
-    return render(request, "adm_template/edit_user_template.html", {"user":user, "membres":membres,"membre_info":muso_info})
+    usercustom = CustomUser.objects.get(id=user_id)
+    #membres = CustomUser.objects.filter(user_type=2)
+    return render(request, "adm_template/edit_user_template.html", {"usercustom":usercustom, "membre_info":muso_info})
 
 def edit_user_save(request):
+    #password_hasher = PBKDF2PasswordHasher()
+
+# Hash the new_password
+    
     if request.method!="POST":
         return HttpResponseRedirect(reverse("manage_user"))
     else:
-        id = request.POST.get("id")
-        first_name = request.POST.get("first_name")
-        last_name = request.POST.get("last_name")
+        user_id = request.POST.get("user_id")
+        #first_name = request.POST.get("first_name")
+        #last_name = request.POST.get("last_name")
         password = request.POST.get("password")
         is_superuser =request.POST.get("is_superuser")
-        username =request.POST.get("username")
-        email=request.POST.get("password")
+        #username =request.POST.get("username")
+        #email=request.POST.get("password")
         is_staff=request.POST.get("is_staff")
         is_active =request.POST.get("is_active")
         user_type =request.POST.get("user_type")
        
     try:
-        customuser=CustomUser.objects.get(id=id)
+        #hashed_password = password_hasher.encode_password(password)
+        customuser=CustomUser.objects.get(id=user_id)
         #customuser.first_name=first_name
         #customuser.last_name=last_name
         customuser.is_superuser =is_superuser
         #customuser.username = username
         #customuser.email = email
+        customuser.password =  make_password(password)
         customuser.is_staff = is_staff
         customuser.is_active = is_active
         customuser.user_type = user_type
         customuser.save()
         messages.success(request,"Successfully Update User")
-        return HttpResponseRedirect(reverse("manage_user"))
+        return HttpResponseRedirect(reverse("edit_user",kwargs={"user_id":user_id}))
     except:
         messages.success(request,"Failed Update User")
-        return HttpResponseRedirect(reverse("manage_user"))
+        return HttpResponseRedirect(reverse("edit_user",kwargs={"user_id":user_id}))
 
 # export tous les muso       
 def export_csv(request):
